@@ -1,0 +1,21 @@
+@media (max-width: 1080px) {
+  .PWork { grid-template-columns: 1fr; }
+  .PWorkHandle[data-work-axis="width"] { display: none; }
+  .PInspector { grid-column: 1; border-bottom: 1px solid var(--line); }
+  .PPreview { grid-column: 1; }
+  .PGroupRow {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+  .PGroupMeta {
+    justify-self: start;
+    justify-content: flex-start;
+  }
+  .PGroupAside { width: 100%; justify-content: space-between; justify-self: stretch; }
+}
+
+@media (max-width: 720px) {
+  .PGroupMain { grid-template-columns: 1fr; }
+  .PGroupMeta, .PLegend, .PPreviewControl { flex-wrap: wrap; }
+  .PTimelineTrack { overflow-x: auto; }
+}

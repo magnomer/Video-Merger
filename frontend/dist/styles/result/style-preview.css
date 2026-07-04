@@ -1,0 +1,41 @@
+.PPreviewTop,
+.PPreviewControl,
+.PPreviewSlider {
+  display: flex;
+  align-items: center;
+}
+
+.PPreviewTop { height: 54px; padding: 0 28px; justify-content: space-between; }
+.PPreviewTop h3 { margin: 0; font-family: inherit; font-size: 16px; font-weight: 700; line-height: 20px; }
+.PPreviewTag { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 10px; border-radius: 7px; background: #f1f5f9; color: #64748b; font-size: 12px; font-weight: 700; }
+.PPreviewStage { position: relative; margin: 0 16px; overflow: hidden; border-radius: 6px; background: #0f172a; box-shadow: 0 8px 22px rgba(15, 23, 42, 0.18); }
+.PPreviewVideo {
+  display: block;
+  width: 100%;
+  height: clamp(245px, 24vw, 330px);
+  object-fit: contain;
+  background: #020617;
+}
+.PPreviewFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: clamp(245px, 24vw, 330px);
+  object-fit: contain;
+  pointer-events: none;
+}
+.PPreviewFrame[hidden] { display: none; }
+.PPreviewControl { position: relative; z-index: 2; min-height: 54px; gap: 20px; padding: 0 28px; color: #fff; background: linear-gradient(180deg, rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.94)); }
+.PPreviewPlay, .PPreviewSkip, .PPreviewFull { display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: #fff; box-shadow: none; }
+.PPreviewPlay { width: 30px; min-width: 30px; }
+.PPreviewSkip { width: 28px; min-width: 28px; }
+.PPreviewIcon { width: 24px; height: 24px; display: block; filter: brightness(0) invert(1); object-fit: contain; }
+.PPreviewIconPlay, .PPreviewIconPause, .PPreviewIconNext, .PPreviewIconVolume, .PPreviewIconFull { width: 24px; height: 24px; }
+.PPreviewTime { font-size: 13px; font-variant-numeric: tabular-nums; }
+.PPreviewSlider { flex: 1 1 auto; height: 5px; accent-color: var(--primary); cursor: pointer; }
+.PPreviewVolume { display: flex; align-items: center; gap: 8px; }
+.PPreviewVolume .PPreviewIcon { width: 24px; height: 24px; }
+.PPreviewVolumeSlider { width: 70px; height: 5px; accent-color: var(--primary); cursor: pointer; }
+.PPreviewFull { width: 28px; min-width: 28px; line-height: 1; }

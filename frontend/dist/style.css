@@ -1,0 +1,13 @@
+@import url("styles/base/style-base.css");
+@import url("styles/base/style-frame.css");
+@import url("styles/base/style-entry.css");
+@import url("styles/base/style-control.css");
+@import url("styles/base/style-dialog.css");
+@import url("styles/result/style-result.css");
+@import url("styles/result/style-group.css");
+@import url("styles/result/style-work.css");
+@import url("styles/result/style-inspector.css");
+@import url("styles/result/style-preview.css");
+@import url("styles/result/style-timeline.css");
+@import url("styles/result/style-result-responsive.css");
+@import url("styles/base/style-responsive.css");

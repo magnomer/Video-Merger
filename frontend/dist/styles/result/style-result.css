@@ -1,0 +1,33 @@
+.PResultShell { flex: 1 1 0; min-height: 0; margin-top: 14px; overflow: hidden; display: flex; flex-direction: column; }
+
+.PResult {
+  flex: 1 1 0;
+  min-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  border-radius: 11px 11px 0 0;
+  border-bottom: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.PResultTitle {
+  flex: 0 0 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 700;
+}
+.PPlaceholder {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed #cbd5e1;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
+  font-weight: 600;
+}

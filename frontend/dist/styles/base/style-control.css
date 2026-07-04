@@ -1,0 +1,113 @@
+.PControl {
+  position: relative;
+  height: 124px;
+  min-height: 124px;
+  display: grid;
+  grid-template-columns: 142px 130px 134px minmax(0, 1fr) 46px minmax(250px, 320px);
+  grid-template-rows: 46px 34px;
+  grid-template-areas:
+    "analyze merge stop spacer divider options"
+    "meter meter meter meter divider options";
+  column-gap: 8px;
+  row-gap: 10px;
+  align-items: center;
+  padding: 16px 30px 16px 20px;
+  border-top: 1px solid var(--line);
+  background: #ffffff;
+}
+#PControlAnalysis { grid-area: analyze; }
+#PControlAssembly { grid-area: merge; }
+#PControlTermination { grid-area: stop; }
+
+.PControl::after {
+  content: "";
+  grid-area: divider;
+  justify-self: center;
+  align-self: stretch;
+  width: 1px;
+  background: var(--line);
+}
+.PControlButton { justify-content: center; gap: 11px; height: 46px; border-radius: 7px; }
+.PControlIcon { font-size: 19px; line-height: 1; }
+.PControlPrimary { border-color: #0569d4; background: linear-gradient(180deg, #0d78ee, #0867d2); color: #fff; }
+.PControlPrimary:hover:not(:disabled) { background: linear-gradient(180deg, #0a70e2, #065fbe); }
+.PControlStop { border-color: #ffb8b8; background: #fff; color: #ef3333; }
+.PControlStop .PControlIcon { color: #ef3333; }
+
+.PMeterBlock {
+  grid-area: meter;
+  width: 100%;
+  min-width: 0;
+  gap: 18px;
+  color: #1f2937;
+  white-space: nowrap;
+}
+.PMeterBlock span { font-weight: 500; }
+.PMeterBlock strong { min-width: 42px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.PMeterTrack { position: relative; height: 6px; flex: 1 1 auto; min-width: 220px; overflow: hidden; border-radius: 999px; background: #e6e8ed; }
+.PMeterFill { width: 0%; height: 100%; border-radius: inherit; background: var(--primary); transition: width 0.18s ease; }
+.PMeterText { min-height: 0; color: transparent; font-size: 0; }
+
+.POptionWarning {
+  grid-area: options;
+  display: grid;
+  grid-template-rows: 46px 34px;
+  align-items: center;
+  justify-content: start;
+  justify-self: stretch;
+  align-self: stretch;
+  gap: 10px;
+  margin-left: 24px;
+  padding-left: 0;
+  flex-wrap: nowrap;
+}
+.POptionHelp { gap: 8px; white-space: nowrap; }
+
+.PHelpButton {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  padding: 0;
+  border-radius: 50%;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
+  background: #fff;
+}
+.PHelpDanger { color: var(--error); border-color: #ffc3c3; }
+.PHelpButton::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: 130%;
+  z-index: 20;
+  width: max-content;
+  max-width: 280px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #111827;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.35;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+}
+.PHelpButton:hover::after, .PHelpButton:focus::after { opacity: 1; }
+
+.PStatus {
+  flex: 0 0 42px;
+  height: 42px;
+  min-height: 42px;
+  gap: 34px;
+  padding: 0 10px;
+  border-top: 1px solid var(--line);
+  color: #303846;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.PStatus span { display: inline-flex; align-items: center; gap: 8px; }
+.PStatusDot { width: 22px; height: 22px; justify-content: center; border-radius: 50%; background: var(--ok); color: #fff; font-weight: 800; }
+

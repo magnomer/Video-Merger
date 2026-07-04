@@ -1,0 +1,18 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "video-merger",
+  "outputfilename": "video-merger",
+  "frontend:install": "",
+  "frontend:build": "",
+  "frontend:dev:watcher": "",
+  "frontend:dev:serverUrl": "",
+  "assetdir": "frontend/dist",
+  "reloaddirs": "frontend/dist",
+  "author": {
+    "name": "Magnomer",
+    "email": ""
+  },
+  "info": {
+    "productVersion": "3.0"
+  }
+}

@@ -1,0 +1,223 @@
+.PFrame {
+  width: min(100%, 1480px);
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.PFrameHeader {
+  height: 64px;
+  min-height: 64px;
+  flex: 0 0 64px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 26px;
+  -webkit-app-region: drag;
+  --wails-draggable: drag;
+}
+.PFrameIdentity { gap: 14px; min-width: 0; }
+
+.PFrameMark {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+}
+.PFrameMarkImage { width: 48px; height: 48px; display: block; }
+.PFrameHeader h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.PFrameVersion { display: none; }
+.PFrameAction { gap: 18px; color: #1f2937; }
+.PFrameSystem { gap: 10px; }
+.PFrameButton {
+  width: 42px; min-width: 42px; height: 36px; display: grid; place-items: center;
+  padding: 0; border: 0; border-radius: 7px; background: transparent;
+}
+.PFrameSymbol { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+#PFrameDash .PFrameSymbol { width: 12px; height: 12px; stroke-width: 1.6; transform: translateY(2px); }
+#PFrameBox .PFrameSymbol { width: 14px; height: 14px; stroke-width: 1.5; }
+#PFrameExit .PFrameSymbol { width: 12px; height: 12px; stroke-width: 1.8; transform: translateY(-1px); }
+.PFrameButton:hover:not(:disabled) { background: #eef2f7; box-shadow: none; }
+#PFrameExit:hover:not(:disabled) { background: #fee2e2; color: #b91c1c; }
+.PLanguage {
+  position: relative;
+  -webkit-app-region: no-drag;
+  --wails-draggable: no-drag;
+}
+.PLanguageButton {
+  height: 34px;
+  width: 178px;
+  min-width: 178px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.76);
+  color: #1f2937;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(14px);
+}
+.PLanguageButton:focus { outline: none; }
+.PLanguageButton:focus-visible {
+  outline: none;
+  border-color: rgba(11, 115, 232, 0.44);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08), 0 0 0 3px rgba(11, 115, 232, 0.12);
+}
+.PLanguageButton:hover:not(:disabled),
+.PLanguageOpen .PLanguageButton {
+  border-color: rgba(11, 115, 232, 0.34);
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08), 0 0 0 3px rgba(11, 115, 232, 0.08);
+}
+.PLanguageSelection {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 4px 0 2px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--primary);
+}
+.PLanguageSelectionCheck {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+}
+.PLanguageSelectionText {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0;
+  text-align: left;
+}
+.PLanguageSelectionBadge {
+  min-width: 28px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  box-shadow: inset 0 0 0 1px rgba(11, 115, 232, 0.08);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.PLanguageArrow {
+  width: 6px;
+  height: 6px;
+  border-right: 1.7px solid currentColor;
+  border-bottom: 1.7px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  opacity: 0.76;
+}
+.PLanguageOpen .PLanguageArrow { transform: translateY(1px) rotate(225deg); }
+.PLanguageMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 50;
+  width: 178px;
+  padding: 6px;
+  border: 1px solid rgba(216, 222, 232, 0.96);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.15);
+  backdrop-filter: blur(18px);
+}
+.PLanguageMenu::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 28px;
+  width: 10px;
+  height: 10px;
+  border-left: 1px solid rgba(216, 222, 232, 0.96);
+  border-top: 1px solid rgba(216, 222, 232, 0.96);
+  background: rgba(255, 255, 255, 0.96);
+  transform: rotate(45deg);
+}
+.PLanguageOption {
+  position: relative;
+  width: 100%;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 10px 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
+  font-size: 13px;
+  font-weight: 650;
+  text-align: left;
+}
+.PLanguageOption:hover:not(:disabled) {
+  background: var(--surface-soft);
+  box-shadow: none;
+}
+.PLanguageOption strong {
+  min-width: 28px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.PLanguageActive {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.PLanguageActive:hover:not(:disabled) { background: var(--primary-soft); }
+.PLanguageActive::before {
+  content: "✓";
+  width: 18px;
+  height: 18px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+}
+.PLanguageActive span { margin-right: auto; }
+.PLanguageActive strong {
+  background: #ffffff;
+  color: var(--primary);
+}
