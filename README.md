@@ -100,6 +100,10 @@ Install Wails first if it is not already available:
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
 ```
 
+### Download
+
+- [Latest release](https://github.com/magnomer/Video-Merger/releases/latest)
+
 ### License
 
 This project is released under the MIT License. See [`LICENSE`](./LICENSE) for details.
@@ -197,6 +201,10 @@ Wails가 아직 설치되어 있지 않다면 먼저 설치합니다.
 ```powershell
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
 ```
+
+### 다운로드
+
+- [최신 릴리스](https://github.com/magnomer/Video-Merger/releases/latest)
 
 ### 라이선스
 
