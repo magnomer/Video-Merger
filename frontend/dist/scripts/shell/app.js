@@ -40,7 +40,6 @@ const PStatusGroup = document.getElementById("PStatusGroup");
 const PStatusClip = document.getElementById("PStatusClip");
 const PStatusSize = document.getElementById("PStatusSize");
 const PStatusDuration = document.getElementById("PStatusDuration");
-const PStatusWarning = document.getElementById("PStatusWarning");
 const PFrameVersion = document.getElementById("PFrameVersion");
 const PSAboutVersion = document.getElementById("PSAboutVersion");
 const PSAboutAuthor = document.getElementById("PSAboutAuthor");

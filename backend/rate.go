@@ -8,6 +8,7 @@ import (
 type LRateComparison struct {
 	LTaskMessage      string
 	LRateWarningState bool
+	LRateSmallState   bool
 }
 
 func LRateCompare(expected string, actual string) LRateComparison {

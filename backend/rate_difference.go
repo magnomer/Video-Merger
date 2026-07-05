@@ -17,6 +17,7 @@ func LRateDifferenceRead(expected string, expectedFPS float64, actual string, ac
 				actualFPS,
 			),
 			LRateWarningState: false,
+			LRateSmallState:   true,
 		}
 	}
 

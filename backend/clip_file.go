@@ -1,6 +1,9 @@
 package backend
 
-import "context"
+import (
+	"context"
+	"path/filepath"
+)
 
 func LClipFileResolve(
 	LRuntimeContext context.Context,
@@ -14,10 +17,11 @@ func LClipFileResolve(
 		return LClip{}, false, nil
 	}
 
-	if seen[path] {
+	identity := LClipIdentityRead(path)
+	if seen[identity] {
 		return LClip{}, false, nil
 	}
-	seen[path] = true
+	seen[identity] = true
 
 	mediaFile, ok := LClipParse(path, marker)
 	if !ok {
@@ -30,4 +34,18 @@ func LClipFileResolve(
 
 	mediaFile.LBatchDirectory = batchDirectory
 	return mediaFile, true, nil
+}
+
+func LClipIdentityRead(path string) string {
+	absPath, err := filepath.Abs(path)
+	if err != nil {
+		absPath = filepath.Clean(path)
+	}
+
+	resolvedPath, err := filepath.EvalSymlinks(absPath)
+	if err == nil {
+		return filepath.Clean(resolvedPath)
+	}
+
+	return filepath.Clean(absPath)
 }

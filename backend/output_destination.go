@@ -3,6 +3,7 @@ package backend
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 )
 
 func LDestinationBatchRead(options LPreference, group LBatch) string {
@@ -19,6 +20,25 @@ func LDestinationBatchRead(options LPreference, group LBatch) string {
 	}
 
 	return filepath.Join(options.LPreferenceOutput, group.LBatchDirectory)
+}
+
+func LDestinationPlanCreate(options LPreference, group LBatch) (string, error) {
+	options.LPreferenceOutput = strings.TrimSpace(options.LPreferenceOutput)
+	options.LPreferenceSuffix = strings.TrimSpace(options.LPreferenceSuffix)
+
+	if err := LSuffixCheck(options.LPreferenceSuffix); err != nil {
+		return "", err
+	}
+	if !options.LPreferenceMirror && options.LPreferenceOutput == "" {
+		return "", fmt.Errorf("output folder is required unless Same as input is checked")
+	}
+
+	outputFolder := LDestinationBatchRead(options, group)
+	if strings.TrimSpace(outputFolder) == "" {
+		return "", fmt.Errorf("output folder is empty")
+	}
+
+	return LDestinationFind(outputFolder, group.LBatchName+options.LPreferenceSuffix, group.LClipExtension), nil
 }
 
 func LDestinationFind(outputFolder string, baseName string, extension string) string {
@@ -42,15 +62,4 @@ func LDestinationFind(outputFolder string, baseName string, extension string) st
 
 		counter++
 	}
-}
-
-func LDestinationPlanResolve(group LBatchResult, suffix string) LBatchResult {
-	if group.LBatchPlan == "" || !LDiskCheck(group.LBatchPlan) {
-		return group
-	}
-
-	folder := filepath.Dir(group.LBatchPlan)
-	group.LBatchPlan = LDestinationFind(folder, group.LBatchName+suffix, LBatchExtensionRead(group.LBatchClip))
-
-	return group
 }

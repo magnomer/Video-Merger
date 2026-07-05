@@ -8,16 +8,16 @@ function PInspectorShow(group) {
     `;
   }
 
-  const isSafe = group.LReportCompatibilityTag === "ok" || group.LReportCompatibilityTag === "notice";
-  const alertClass = isSafe ? " PInspectorOk" : "";
-  const alertTitle = isSafe ? PLanguageTextRead("canMerge") : PLanguageTextRead("cannotMerge");
-  const alertText = isSafe ? PLanguageTextRead("safeText") : PLanguageTextRead("unsafeText");
+  const alertState = PInspectorStateRead(group);
+  const alertClass = alertState === "ok" ? " PInspectorOk" : alertState === "caution" ? " PInspectorCaution" : "";
+  const alertTitle = alertState === "ok" ? PLanguageTextRead("canMerge") : alertState === "caution" ? PLanguageTextRead("canMergeWithCaution") : PLanguageTextRead("cannotMerge");
+  const alertText = alertState === "ok" ? PLanguageTextRead("safeText") : alertState === "caution" ? PLanguageTextRead("cautionText") : PLanguageTextRead("unsafeText");
 
   return `
     <div class="PInspectorTitle">${PLanguageTextRead("inspector")}</div>
     <div class="PInspectorBody">
       <div class="PInspectorAlert${alertClass}">
-        ${PInspectorIconShow(isSafe)}
+        ${PInspectorIconShow(alertState)}
         <div><strong>${alertTitle}</strong><p>${alertText}</p></div>
       </div>
       <div class="PIssueList">${PIssueListShow(group)}</div>
@@ -46,4 +46,18 @@ function PInspectorOutputTitleRead(group) {
   }
 
   return LHtmlEscape(group.LReportOutputTitle);
+}
+
+function PInspectorStateRead(group) {
+  const tag = String(group?.LReportCompatibilityTag || "").toLowerCase();
+
+  if (tag === "ok" || tag === "notice") {
+    return "ok";
+  }
+
+  if (tag === "caution") {
+    return "caution";
+  }
+
+  return "error";
 }

@@ -20,25 +20,23 @@ func LInspectionGroupRun(
 		}
 
 		groupResult := LInspectionGroupCreate(options, group)
-		result.LTaskResult = append(result.LTaskResult, groupResult)
 		result.LTaskMessage = "Analyzing " + group.LBatchName
-		LReportEmit(onReport, LReportCreate(result, false))
 
 		compatibility, err := LCompatibilityCheck(LRuntimeContext, options, group)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				result.LTaskCancel = true
 				result.LTaskMessage = "Analysis canceled."
-				result.LTaskResult[len(result.LTaskResult)-1].LProgressStatus = "Canceled"
 				return result, err
 			}
 
 			return LRouteResult{}, err
 		}
 
+		groupResult.LBatchCompatibility = compatibility
+		groupResult.LProgressStatus = "Finished"
+		result.LTaskResult = append(result.LTaskResult, groupResult)
 		result.LProgressProcessed += len(group.LBatchClip)
-		result.LTaskResult[len(result.LTaskResult)-1].LBatchCompatibility = compatibility
-		result.LTaskResult[len(result.LTaskResult)-1].LProgressStatus = "Finished"
 		result.LTaskMessage = "Analyzed " + group.LBatchName
 
 		LReportEmit(onReport, LReportCreate(result, false))

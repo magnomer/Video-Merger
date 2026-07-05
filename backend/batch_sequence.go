@@ -1,6 +1,9 @@
 package backend
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 func LSequenceFind(files []LClip) []string {
 	if len(files) == 0 {
@@ -32,6 +35,32 @@ func LSequenceFind(files []LClip) []string {
 				fmt.Sprintf("Missing part numbers between %d and %d", prev, curr),
 			)
 		}
+	}
+
+	return warnings
+}
+
+func LSequenceDuplicateFind(files []LClip) []string {
+	if len(files) < 2 {
+		return nil
+	}
+
+	counts := map[int]int{}
+	for _, file := range files {
+		counts[file.LClipNumber]++
+	}
+
+	numbers := []int{}
+	for number, count := range counts {
+		if count > 1 {
+			numbers = append(numbers, number)
+		}
+	}
+	sort.Ints(numbers)
+
+	warnings := []string{}
+	for _, number := range numbers {
+		warnings = append(warnings, fmt.Sprintf("Duplicate part number %d creates an ambiguous merge order.", number))
 	}
 
 	return warnings

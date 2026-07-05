@@ -19,6 +19,11 @@ func LCompatibilityCheck(LRuntimeContext context.Context, preference LPreference
 		LCompatibilityState: true,
 	}
 
+	for _, warning := range LSequenceDuplicateFind(group.LBatchClip) {
+		report.LCompatibilityState = false
+		report.LCompatibilityWarning = append(report.LCompatibilityWarning, warning)
+	}
+
 	if len(group.LBatchClip) < 2 {
 		report.LCompatibilityNotice = append(report.LCompatibilityNotice, "Single-file group. It will be copied instead of merged.")
 		return report, nil
@@ -36,6 +41,7 @@ func LCompatibilityCheck(LRuntimeContext context.Context, preference LPreference
 	}
 
 	firstSignature := LSignatureBuild(firstProbe)
+	smallRateChecks := []LCompatibilityRateCheck{}
 
 	for _, file := range group.LBatchClip[1:] {
 		if LRuntimeContext.Err() != nil {
@@ -68,6 +74,17 @@ func LCompatibilityCheck(LRuntimeContext context.Context, preference LPreference
 			expected := firstSignature.LProbeStream[i]
 			actual := currentSignature.LProbeStream[i]
 
+			if LCompatibilitySmallRateCheck(expected, actual) {
+				smallRateChecks = append(smallRateChecks, LCompatibilityRateCheck{
+					LClipName:     file.LClipName,
+					LClipPath:     file.LClipPath,
+					LStreamIndex:  i,
+					LVideoIndex:   LCompatibilityVideoIndexRead(firstSignature, i),
+					LExpectedRate: expected.LRateAverage,
+					LActualRate:   actual.LRateAverage,
+				})
+			}
+
 			result := LSignatureStreamCompare(expected, actual)
 
 			for _, caution := range result.LCompatibilityCaution {
@@ -85,6 +102,24 @@ func LCompatibilityCheck(LRuntimeContext context.Context, preference LPreference
 				)
 			}
 		}
+	}
+
+	guardCautions, guardWarnings, err := LCompatibilityRateGuardRun(LRuntimeContext, preference, group, smallRateChecks)
+	if err != nil {
+		return LCompatibility{}, err
+	}
+
+	for _, caution := range guardCautions {
+		report.LCompatibilityCaution = append(report.LCompatibilityCaution, caution)
+	}
+
+	for _, warning := range guardWarnings {
+		report.LCompatibilityState = false
+		report.LCompatibilityWarning = append(report.LCompatibilityWarning, warning)
+	}
+
+	if len(smallRateChecks) > 0 && len(guardCautions) == 0 && len(guardWarnings) == 0 {
+		report.LCompatibilityNotice = append(report.LCompatibilityNotice, "Frame-rate metadata differs slightly, but packet timing examination and a concat dry run found no merge problem.")
 	}
 
 	return report, nil

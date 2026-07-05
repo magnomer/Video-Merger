@@ -29,6 +29,11 @@
   color: var(--error);
 }
 .PInspectorAlert.PInspectorOk { border-color: #cfefd9; background: linear-gradient(180deg, #f5fff8, #fff); color: var(--ok); }
+.PInspectorAlert.PInspectorCaution {
+  border-color: var(--caution-line);
+  background: linear-gradient(180deg, #fffaf3, #fff);
+  color: var(--caution);
+}
 .PInspectorAlert svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .PInspectorAlert strong { display: block; margin-bottom: 4px; font-size: 15px; }
 .PInspectorAlert p { margin: 0; color: #64748b; font-size: 13px; }
@@ -36,18 +41,28 @@
 .PIssueList { border: 1px solid var(--line); border-top: 0; border-radius: 0 0 8px 8px; overflow: hidden; }
 .PIssueRow { min-height: 43px; justify-content: space-between; gap: 12px; padding: 0 13px; border-top: 1px solid var(--line); font-size: 13px; }
 .PIssueRow:first-child { border-top: 0; }
+.PIssueBox { border-top: 1px solid var(--line); }
+.PIssueBox:first-child { border-top: 0; }
+.PIssueBox > .PIssueRow { border-top: 0; cursor: pointer; list-style: none; }
+.PIssueBox > .PIssueRow::-webkit-details-marker { display: none; }
 .PIssueName { display: inline-flex; align-items: center; gap: 9px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .PIssueDot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); flex: 0 0 auto; }
-.PIssueValue { color: var(--muted); white-space: nowrap; }
+.PIssueValue { min-width: 0; max-width: 58%; color: var(--muted); text-align: right; white-space: normal; overflow-wrap: anywhere; }
 .PIssueRow.PIssueOk .PIssueDot { background: var(--ok); }
 .PIssueRow.PIssueOk .PIssueValue { color: var(--ok); }
-.PIssueRow.PIssueNotice .PIssueDot { background: var(--muted); }
-.PIssueRow.PIssueNotice .PIssueValue { color: var(--muted); }
-.PIssueRow.PIssueWarning .PIssueDot { background: var(--warning); }
-.PIssueRow.PIssueWarning .PIssueValue { color: var(--warning); }
-.PIssueRow.PIssueError .PIssueDot { background: var(--error); }
-.PIssueRow.PIssueError .PIssueValue { color: var(--error); }
-.PIssueValue::after { content: "›"; padding-left: 10px; color: #64748b; }
+.PIssueNotice .PIssueDot { background: var(--muted); }
+.PIssueNotice .PIssueValue { color: var(--muted); }
+.PIssueCaution .PIssueDot { background: var(--caution); }
+.PIssueCaution .PIssueValue { color: var(--caution); }
+.PIssueWarning .PIssueDot { background: var(--warning); }
+.PIssueWarning .PIssueValue { color: var(--warning); }
+.PIssueError .PIssueDot { background: var(--error); }
+.PIssueError .PIssueValue { color: var(--error); }
+.PIssueBox > .PIssueRow .PIssueValue::after { content: "▾"; display: inline-block; width: 12px; padding-left: 10px; color: #64748b; text-align: center; white-space: nowrap; }
+.PIssueBox[open] > .PIssueRow .PIssueValue::after { content: "▴"; }
+.PIssueDetail { padding: 0 13px 12px 29px; color: #485568; font-size: 12px; line-height: 18px; background: #fbfcfe; }
+.PIssueDetail ul { margin: 0; padding: 8px 0 0 16px; }
+.PIssueDetail li { margin: 3px 0; word-break: break-word; }
 
 .PSectionTitle { margin: 18px 14px 8px; color: #111827; font-family: inherit; font-size: 13px; font-weight: 700; line-height: 18px; }
 .PMeasure { display: grid; gap: 8px; margin: 0 14px; }

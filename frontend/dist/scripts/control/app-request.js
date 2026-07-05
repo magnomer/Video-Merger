@@ -1,7 +1,10 @@
 function PControlStart() {
   PSourceExplorer.addEventListener("click", PSourceExplorerOpen);
   PSourceFolder.addEventListener("click", PSourceFolderOpen);
-  PSourceText.addEventListener("input", PSourceIconSet);
+  PSourceText.addEventListener("input", () => {
+    PControlSourceChangeStop();
+    PSourceIconSet();
+  });
   POutputFolder.addEventListener("click", POutputFolderOpen);
   POutputExplorer.addEventListener("click", POutputExplorerOpen);
   POptionMirror.addEventListener("change", POutputStateSet);
@@ -26,6 +29,7 @@ async function PSourceFolderOpen() {
       return;
     }
 
+    await PControlSourceChangeStop();
     PSourceText.value = selectedFolder;
     PSourceIconFolderSet();
     POptionSave();
@@ -80,15 +84,25 @@ async function POutputExplorerOpen() {
   }
 }
 
+async function PControlSourceChangeStop() {
+  if (!PControlBusyState) {
+    return;
+  }
+
+  try {
+    PMeterText.textContent = PLanguageTextRead("stopping");
+    await window.go.bridge.LProgram.LTaskStop();
+  } catch (_) {}
+}
+
 async function PControlInspectionStart() {
   const options = POptionRead();
 
   POptionSave();
   PMeterReset();
   PControlStateSet(true, true);
-  PMeterText.textContent = PLanguageTextRead("analyzing");
   PResultMergeUpdateSet(false);
-  PResultShow(null);
+  PResultAnalysisStart(options);
 
   try {
     const report = await window.go.bridge.LProgram.LInspectionStart(options);
@@ -103,13 +117,16 @@ async function PControlInspectionStart() {
 async function PControlMergerStart() {
   const options = POptionRead();
 
+  const hasCompatibleAnalysis = PResultAnalysisCompatibleCheck(options);
+
   POptionSave();
   PMeterReset();
   PControlStateSet(true, true);
   PMeterText.textContent = PLanguageTextRead("startingMerge");
-  PResultMergeUpdateSet(PResultAnalysisCheck());
-  if (!PResultAnalysisCheck()) {
-    PResultShow(null);
+  PResultMergeUpdateSet(hasCompatibleAnalysis);
+
+  if (!hasCompatibleAnalysis) {
+    PResultMergeStart(options);
   }
 
   try {

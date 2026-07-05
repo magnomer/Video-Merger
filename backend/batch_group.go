@@ -13,8 +13,12 @@ func LBatchClipCreate(files []LClip) []LBatch {
 	var groups []LBatch
 
 	for _, files := range groupMap {
-		sort.Slice(files, func(i, j int) bool {
-			return files[i].LClipNumber < files[j].LClipNumber
+		sort.SliceStable(files, func(i, j int) bool {
+			if files[i].LClipNumber != files[j].LClipNumber {
+				return files[i].LClipNumber < files[j].LClipNumber
+			}
+
+			return files[i].LClipPath < files[j].LClipPath
 		})
 
 		group := LBatch{

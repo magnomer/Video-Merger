@@ -1,5 +1,5 @@
 function PPreviewSliderStart(event, state, video) {
-  if (!state.active) {
+  if (!PPreviewSessionCheck(state)) {
     return;
   }
 
@@ -9,7 +9,7 @@ function PPreviewSliderStart(event, state, video) {
 }
 
 function PPreviewSliderStop(event, state, video) {
-  if (!state.active) {
+  if (!PPreviewSessionCheck(state)) {
     return;
   }
 
@@ -22,7 +22,7 @@ function PPreviewSliderStop(event, state, video) {
 }
 
 function PPreviewSeekSet(target, state, offsets, video, load) {
-  if (!state.active) {
+  if (!PPreviewSessionCheck(state)) {
     return;
   }
 

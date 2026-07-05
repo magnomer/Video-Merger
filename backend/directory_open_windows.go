@@ -9,7 +9,7 @@ import (
 
 func LDirectoryOpen(path string) error {
 	cleanPath := filepath.Clean(path)
-	cmd := exec.Command("cmd", "/C", "start", "", cleanPath)
+	cmd := exec.Command("explorer.exe", cleanPath)
 	LCommandHide(cmd)
 	return cmd.Start()
 }

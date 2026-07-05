@@ -1,13 +1,13 @@
 function PPreviewEventStart(state, offsets, view, load) {
   view.play.addEventListener("click", () => {
-    if (!state.active) {
+    if (!PPreviewSessionCheck(state)) {
       return;
     }
 
     view.video.paused ? view.video.play().catch(() => {}) : view.video.pause();
   });
   view.next.addEventListener("click", () => {
-    if (!state.active) {
+    if (!PPreviewSessionCheck(state)) {
       return;
     }
 
@@ -21,7 +21,7 @@ function PPreviewEventStart(state, offsets, view, load) {
   view.video.addEventListener("play", () => PPreviewPlaySet(state, view));
   view.video.addEventListener("pause", () => PPreviewPauseSet(state, view));
   view.video.addEventListener("timeupdate", () => {
-    if (!state.active) {
+    if (!PPreviewSessionCheck(state)) {
       return;
     }
 
@@ -30,14 +30,14 @@ function PPreviewEventStart(state, offsets, view, load) {
   view.video.addEventListener("ended", () => PPreviewEndSet(state, view, load, offsets));
   view.video.addEventListener("error", () => PPreviewErrorSet(state, offsets, view, load));
   view.volume?.addEventListener("input", () => {
-    if (!state.active) {
+    if (!PPreviewSessionCheck(state)) {
       return;
     }
 
     view.video.volume = Math.max(0, Math.min(1, Number(view.volume.value || 0) / 100));
   });
   view.full.addEventListener("click", () => {
-    if (!state.active) {
+    if (!PPreviewSessionCheck(state)) {
       return;
     }
 
@@ -50,7 +50,7 @@ function PPreviewSegmentEventStart(timeline, state, video, load) {
   timeline?.querySelectorAll(".PSegment[data-preview-index]").forEach(segment => {
     segment.addEventListener("click", event => {
       event.stopPropagation();
-      if (!state.active) {
+      if (!PPreviewSessionCheck(state)) {
         return;
       }
       const index = Number(segment.dataset.previewIndex);
@@ -65,7 +65,7 @@ function PPreviewSegmentEventStart(timeline, state, video, load) {
 }
 
 function PPreviewPlaySet(state, view) {
-  if (!state.active) {
+  if (!PPreviewSessionCheck(state)) {
     return;
   }
 
@@ -75,7 +75,7 @@ function PPreviewPlaySet(state, view) {
 }
 
 function PPreviewPauseSet(state, view) {
-  if (!state.active) {
+  if (!PPreviewSessionCheck(state)) {
     return;
   }
 
@@ -84,7 +84,7 @@ function PPreviewPauseSet(state, view) {
 }
 
 function PPreviewEndSet(state, view, load, offsets) {
-  if (!state.active) {
+  if (!PPreviewSessionCheck(state)) {
     return;
   }
 
@@ -98,7 +98,7 @@ function PPreviewEndSet(state, view, load, offsets) {
 }
 
 function PPreviewErrorSet(state, offsets, view, load) {
-  if (!state.active) {
+  if (!PPreviewSessionCheck(state)) {
     return;
   }
 

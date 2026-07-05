@@ -3,6 +3,7 @@ package bridge
 import (
 	"context"
 	"sync"
+	"video-merger/backend"
 )
 
 type LProgram struct {
@@ -12,6 +13,11 @@ type LProgram struct {
 
 	LTaskLock   sync.Mutex
 	LTaskCancel context.CancelFunc
+
+	LInspectionLock       sync.Mutex
+	LInspectionPreference backend.LPreference
+	LInspectionResult     backend.LRouteResult
+	LInspectionReady      bool
 }
 
 func LProgramCreate(LManifestWailsData []byte) *LProgram {

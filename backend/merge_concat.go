@@ -22,23 +22,39 @@ func LMergerConcatRun(LRuntimeContext context.Context, options LPreference, grou
 			LTaskMessage: fmt.Sprintf("Could not create concat list file: %v", err),
 		}
 	}
-	defer os.Remove(listFilePath)
+	defer LTemporaryOwnedRemove(listFilePath)
+
+	temporaryOutputPath, err := LDiskOutputTemporaryRead(outputPath)
+	if err != nil {
+		return LMergerResult{
+			LTaskSuccess: false,
+			LTaskMessage: fmt.Sprintf("Could not reserve temporary output: %v", err),
+		}
+	}
+	defer os.Remove(temporaryOutputPath)
+
+	ffmpegPath, err := LCommandFFmpegRead(options)
+	if err != nil {
+		return LMergerResult{
+			LTaskSuccess: false,
+			LTaskMessage: fmt.Sprintf("FFmpeg path is invalid: %v", err),
+		}
+	}
 
 	cmd := exec.CommandContext(
 		LRuntimeContext,
-		LCommandFFmpegRead(options),
+		ffmpegPath,
+		"-y",
 		"-f", "concat",
 		"-safe", "0",
 		"-i", listFilePath,
 		"-c", "copy",
-		outputPath,
+		temporaryOutputPath,
 	)
 	LCommandHide(cmd)
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		os.Remove(outputPath)
-
 		if LRuntimeContext.Err() != nil {
 			return LMergerResult{
 				LTaskSuccess: false,
@@ -49,6 +65,13 @@ func LMergerConcatRun(LRuntimeContext context.Context, options LPreference, grou
 		return LMergerResult{
 			LTaskSuccess: false,
 			LTaskMessage: fmt.Sprintf("FFmpeg merge failed: %v\n%s", err, string(output)),
+		}
+	}
+
+	if err := LDiskPublishMove(temporaryOutputPath, outputPath); err != nil {
+		return LMergerResult{
+			LTaskSuccess: false,
+			LTaskMessage: fmt.Sprintf("Could not publish merged output: %v", err),
 		}
 	}
 

@@ -13,6 +13,7 @@ type LSignatureStream struct {
 	LSignatureHeight        int
 	LSignaturePixelFormat   string
 	LRateAverage            string
+	LProbeTimeBase          string
 	LSignatureRateSample    string
 	LSignatureChannelCount  int
 	LSignatureChannelLayout string
@@ -34,6 +35,7 @@ func LSignatureBuild(probe LProbe) LSignature {
 			LSignatureHeight:        stream.LProbeHeight,
 			LSignaturePixelFormat:   stream.LProbePixelFormat,
 			LRateAverage:            stream.LRateAverage,
+			LProbeTimeBase:          stream.LProbeTimeBase,
 			LSignatureRateSample:    stream.LProbeRateSample,
 			LSignatureChannelCount:  stream.LProbeChannelCount,
 			LSignatureChannelLayout: stream.LProbeChannelLayout,
@@ -66,6 +68,10 @@ func LSignatureStreamCompare(expected LSignatureStream, actual LSignatureStream)
 		result.LCompatibilityWarning = append(result.LCompatibilityWarning, fmt.Sprintf("pixel format differs: %s vs %s", expected.LSignaturePixelFormat, actual.LSignaturePixelFormat))
 	}
 
+	if expected.LProbeTimeBase != actual.LProbeTimeBase {
+		result.LCompatibilityWarning = append(result.LCompatibilityWarning, fmt.Sprintf("time base differs: %s vs %s", expected.LProbeTimeBase, actual.LProbeTimeBase))
+	}
+
 	if expected.LSignatureRateSample != actual.LSignatureRateSample {
 		result.LCompatibilityWarning = append(result.LCompatibilityWarning, fmt.Sprintf("sample rate differs: %s vs %s", expected.LSignatureRateSample, actual.LSignatureRateSample))
 	}
@@ -79,7 +85,7 @@ func LSignatureStreamCompare(expected LSignatureStream, actual LSignatureStream)
 
 		if frameRateResult.LRateWarningState {
 			result.LCompatibilityWarning = append(result.LCompatibilityWarning, frameRateResult.LTaskMessage)
-		} else if frameRateResult.LTaskMessage != "" {
+		} else if frameRateResult.LTaskMessage != "" && !frameRateResult.LRateSmallState {
 			result.LCompatibilityCaution = append(result.LCompatibilityCaution, frameRateResult.LTaskMessage)
 		}
 	}

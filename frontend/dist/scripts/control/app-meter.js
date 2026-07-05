@@ -7,7 +7,6 @@ function PMeterReset() {
   PStatusClip.textContent = PLanguageCountRead(0, "clip", "clips");
   PStatusSize.textContent = "-";
   PStatusDuration.textContent = "-";
-  PStatusWarning.textContent = PLanguageCountRead(0, "warning", "warnings");
 }
 
 function PResultReportSet(report) {

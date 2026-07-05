@@ -52,9 +52,6 @@ function PGroupClipRead(group) {
   return (group.LReportFile || []).length;
 }
 
-function PGroupWarningRead(group) {
-  return PIssueRead(group).reduce((sum, issue) => sum + (issue.count || 1), 0);
-}
 
 function PPreviewNameRead(group) {
   const first = (group.LReportFile || [])[0];

@@ -12,9 +12,14 @@ import (
 var LLoudnessPattern = regexp.MustCompile(`(?m)^\s*I:\s*(-?\d+(?:\.\d+)?)\s+LUFS`)
 
 func LLoudnessMeasure(LRuntimeContext context.Context, preference LPreference, path string) *float64 {
+	ffmpegPath, err := LCommandFFmpegRead(preference)
+	if err != nil {
+		return nil
+	}
+
 	cmd := exec.CommandContext(
 		LRuntimeContext,
-		LCommandFFmpegRead(preference),
+		ffmpegPath,
 		"-hide_banner",
 		"-nostats",
 		"-i", path,

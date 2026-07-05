@@ -1,6 +1,5 @@
 function PGroupShow(group, index) {
   const selected = index === PResultStateIndex ? " PGroupSelected" : "";
-  const warningCount = PGroupWarningRead(group);
   const compatibilityClass = PBadgeClassRead(group.LReportCompatibilityTag);
   const taskClass = PBadgeClassRead(group.LReportTaskTag);
 
@@ -16,7 +15,6 @@ function PGroupShow(group, index) {
           <span>${PIconDiskShow()}${LHtmlEscape(group.LReportSize)}</span>
           <span>${PIconClockShow()}${LHtmlEscape(group.LReportDuration)}</span>
           <span>${PIconSpeakerShow()}${LHtmlEscape(group.LReportLoudness || "-")}</span>
-          ${warningCount > 0 ? `<span class="PBadge PBadgeWarn">△ ${PLanguageCountRead(warningCount, "warning", "warnings")}</span>` : ""}
         </div>
         <div class="PGroupAside">
           <span class="PBadge ${compatibilityClass}">${LHtmlEscape(PLanguageReportTextRead(group.LReportCompatibility))}</span>

@@ -19,6 +19,7 @@ type LProbeStream struct {
 	LProbeHeight        int    `json:"height,omitempty"`
 	LProbePixelFormat   string `json:"pix_fmt,omitempty"`
 	LRateAverage        string `json:"avg_frame_rate,omitempty"`
+	LProbeTimeBase      string `json:"time_base,omitempty"`
 	LProbeRateSample    string `json:"sample_rate,omitempty"`
 	LProbeChannelCount  int    `json:"channels,omitempty"`
 	LProbeChannelLayout string `json:"channel_layout,omitempty"`
@@ -31,9 +32,14 @@ type LProbeFormat struct {
 }
 
 func LProbeRun(LRuntimeContext context.Context, preference LPreference, path string) (LProbe, error) {
+	ffprobePath, err := LCommandFFprobeRead(preference)
+	if err != nil {
+		return LProbe{}, err
+	}
+
 	cmd := exec.CommandContext(
 		LRuntimeContext,
-		LCommandFFprobeRead(preference),
+		ffprobePath,
 		"-v", "quiet",
 		"-print_format", "json",
 		"-show_streams",

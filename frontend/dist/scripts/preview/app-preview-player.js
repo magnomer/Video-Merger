@@ -1,20 +1,46 @@
 let PPreviewSessionStopSet = null;
+let PPreviewSessionValue = 0;
 
 function PPreviewStop() {
+  PPreviewSessionValue += 1;
+
   if (typeof PPreviewSessionStopSet === "function") {
     PPreviewSessionStopSet();
     PPreviewSessionStopSet = null;
   }
+
+  PPreviewBackendStopSet();
 }
 
-function PPreviewStart(group) {
-  PPreviewStop();
+function PPreviewBackendStopSet() {
+  try {
+    const stop = window.go?.bridge?.LProgram?.LAssetPreviewStop;
+    if (typeof stop === "function") {
+      stop().catch?.(() => {});
+    }
+  } catch (_) {}
+}
+
+function PPreviewScheduleStart(group) {
+  const session = PPreviewSessionValue;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (session !== PPreviewSessionValue) {
+        return;
+      }
+
+      PPreviewStart(group, session);
+    });
+  });
+}
+
+function PPreviewStart(group, session) {
   const view = PPreviewViewRead(group);
-  if (!view.video || view.files.length === 0) {
+  if (!view.video || view.files.length === 0 || session !== PPreviewSessionValue) {
     return;
   }
 
-  const state = { files: view.files, index: 0, seeking: false, playing: false, resume: false, pendingSecond: null, readyKey: 0, active: true };
+  const state = { files: view.files, index: 0, seeking: false, playing: false, resume: false, pendingSecond: null, readyKey: 0, active: true, session };
   const offsets = PPreviewOffsetRead(view.files);
   const totalSeconds = offsets[offsets.length - 1] || 0;
 
@@ -71,8 +97,12 @@ function PPreviewViewRead(group) {
   };
 }
 
+function PPreviewSessionCheck(state) {
+  return state.active && state.session === PPreviewSessionValue;
+}
+
 function PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view, compatibility = false) {
-  if (!state.active) {
+  if (!PPreviewSessionCheck(state)) {
     return;
   }
 
@@ -82,7 +112,7 @@ function PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view, com
   const readyKey = state.readyKey + 1;
   state.readyKey = readyKey;
   const ready = () => {
-    if (state.active && readyKey === state.readyKey) {
+    if (PPreviewSessionCheck(state) && readyKey === state.readyKey) {
       PPreviewTargetClear(state, offsets, view.video, view.slider, view.now);
     }
   };
@@ -95,7 +125,7 @@ function PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view, com
     PPreviewFrameReadySet(view, second, false, ready);
     view.video.currentTime = second;
     PPreviewTimeSet(state, offsets, view.video, view.slider, view.now);
-    if (state.active && shouldPlay) view.video.play().catch(() => {});
+    if (PPreviewSessionCheck(state) && shouldPlay) view.video.play().catch(() => {});
     return;
   }
 
@@ -103,7 +133,7 @@ function PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view, com
   view.video.dataset.previewAsset = state.files[state.index].LReportAsset;
   view.video.dataset.previewCompatibility = compatibility ? "true" : "false";
   view.video.onloadedmetadata = () => {
-    if (!state.active || readyKey !== state.readyKey) {
+    if (!PPreviewSessionCheck(state) || readyKey !== state.readyKey) {
       return;
     }
 
@@ -111,8 +141,13 @@ function PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view, com
     PPreviewFrameReadySet(view, second, true, ready);
     view.video.currentTime = second;
     PPreviewTimeSet(state, offsets, view.video, view.slider, view.now);
-    if (state.active && state.resume) view.video.play().catch(() => {});
+    if (PPreviewSessionCheck(state) && state.resume) view.video.play().catch(() => {});
   };
+
+  if (!PPreviewSessionCheck(state)) {
+    return;
+  }
+
   view.video.src = source;
 }
 

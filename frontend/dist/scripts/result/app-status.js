@@ -5,7 +5,6 @@ function PStatusReportSet(report) {
 
   const groups = report?.LReportGroup || [];
   const clips = groups.reduce((sum, group) => sum + PGroupClipRead(group), 0);
-  const warnings = groups.reduce((sum, group) => sum + PGroupWarningRead(group), 0);
   const first = groups[0] || {};
 
   PStatusMessage.innerHTML = `<span class="PStatusDot">✓</span>${LHtmlEscape(PLanguageReportTextRead(report?.LTaskMessage) || PLanguageTextRead("analysisCompleted"))}`;
@@ -13,5 +12,4 @@ function PStatusReportSet(report) {
   PStatusClip.textContent = PLanguageCountRead(clips, "clip", "clips");
   PStatusSize.textContent = first.LReportSize || "-";
   PStatusDuration.textContent = first.LReportDuration || "-";
-  PStatusWarning.textContent = PLanguageCountRead(warnings, "warning", "warnings");
 }

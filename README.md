@@ -88,7 +88,7 @@ For normal use:
 
 For development:
 
-- Go 1.23 or later.
+- Go 1.25 or later.
 - Wails CLI v2.
 - PowerShell.
 
@@ -190,7 +190,7 @@ ffmpeg -f concat -safe 0 -i <concat-list> -c copy <output-file>
 
 개발:
 
-- Go 1.23 이상.
+- Go 1.25 이상.
 - Wails CLI v2.
 - PowerShell.
 

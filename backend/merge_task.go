@@ -1,6 +1,9 @@
 package backend
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 func LMergerTaskRun(
 	LRuntimeContext context.Context,
@@ -21,8 +24,15 @@ func LMergerTaskRun(
 			return finalReport
 		}
 
-		groupResult := LDestinationPlanResolve(result.LTaskResult[index], options.LPreferenceSuffix)
-		group := LMergerGroupCreate(groupResult)
+		group := LMergerGroupCreate(result.LTaskResult[index])
+		groupResult := LMergerTaskPlanSet(options, result.LTaskResult[index], group)
+
+		if groupResult.LMergerResult != nil {
+			result.LTaskResult[index] = groupResult
+			result.LTaskMessage = groupResult.LMergerResult.LTaskMessage
+			LReportEmit(onReport, LReportCreate(result, true))
+			continue
+		}
 
 		groupResult.LProgressStatus = "Processing"
 		result.LTaskResult[index] = groupResult
@@ -66,7 +76,24 @@ func LMergerTaskPrepare(result LRouteResult) LRouteResult {
 
 	for index := range result.LTaskResult {
 		result.LTaskResult[index].LProgressStatus = ""
+		result.LTaskResult[index].LMergerResult = nil
 	}
 
 	return result
+}
+
+func LMergerTaskPlanSet(options LPreference, groupResult LBatchResult, group LBatch) LBatchResult {
+	outputPath, err := LDestinationPlanCreate(options, group)
+	if err == nil {
+		groupResult.LBatchPlan = outputPath
+		return groupResult
+	}
+
+	mergeResult := LMergerResult{
+		LTaskSuccess: false,
+		LTaskMessage: fmt.Sprintf("Could not plan output: %v", err),
+	}
+	groupResult.LProgressStatus = "Failed"
+	groupResult.LMergerResult = &mergeResult
+	return groupResult
 }
