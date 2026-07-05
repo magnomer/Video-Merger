@@ -10,6 +10,10 @@ KO · 번호가 붙은 동영상 조각을 자동으로 찾고, 안전하게 이
 
 ## English
 
+### Screenshot
+
+<img width="1226" height="1233" alt="English" src="https://github.com/user-attachments/assets/ca123086-7768-4203-8f22-da2c81f600ec" />
+
 ### What it is
 
 Video Merger is a small Windows utility for joining split video files that already belong together.
@@ -103,6 +107,10 @@ This project is released under the MIT License. See [`LICENSE`](./LICENSE) for d
 ---
 
 ## 한국어
+
+### 스크린샷
+
+<img width="1226" height="1233" alt="Korean" src="https://github.com/user-attachments/assets/dceca962-c290-4d4b-a8b9-0216dc4f5c32" />
 
 ### 이 프로그램은?
 
