@@ -41,7 +41,7 @@ async function PSourceFolderOpen() {
 function PSourceIconSet() {
   const sourceValue = PSourceText.value.trim();
   const sourceLines = sourceValue.split(/\r?\n/).filter(Boolean);
-  const sourcePattern = /\.(mp4|mov|mkv|m4v)$/i;
+  const sourcePattern = /\.(mp4|m4v|mov|3gp|3g2|mkv|webm|avi|ts|mts|m2ts|mpeg|mpg|vob|flv|f4v|ogv|ogg|mxf|wmv|asf|wtv|nut|dv)$/i;
 
   if (sourceLines.length > 1 || sourceLines.some(sourceLine => sourcePattern.test(sourceLine))) {
     PSourceIconFileSet();

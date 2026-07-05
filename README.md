@@ -57,14 +57,34 @@ FFmpeg and FFprobe must be available on the user’s machine, normally through `
 
 ### Supported input extensions
 
-The current file scanner accepts these video extensions:
+The file scanner accepts common local video container extensions that fit the program's FFmpeg concat demuxer + stream-copy merge model:
 
 - `.mp4`
-- `.mov`
-- `.mkv`
 - `.m4v`
+- `.mov`
+- `.3gp`
+- `.3g2`
+- `.mkv`
+- `.webm`
+- `.avi`
+- `.ts`
+- `.mts`
+- `.m2ts`
+- `.mpeg`
+- `.mpg`
+- `.vob`
+- `.flv`
+- `.f4v`
+- `.ogv`
+- `.ogg`
+- `.mxf`
+- `.wmv`
+- `.asf`
+- `.wtv`
+- `.nut`
+- `.dv`
 
-Other formats may still be supported by FFmpeg itself, but they are not currently included in the program’s scan filter.
+Extension support is only the first filter. FFmpeg support still depends on the installed FFmpeg build, and a specific group can merge only when FFprobe and the program's compatibility analysis find compatible streams. The output keeps the group's source extension, so the container must also be suitable as an FFmpeg output container for stream copy.
 
 ### How it works
 
@@ -157,16 +177,36 @@ Video Merger는 분할 동영상 파일을 합치는 작은 Windows 유틸리티
 
 FFmpeg는 사전에 설치되어 있어야 합니다 (`PATH`를 통해 찾을 수 있어야 합니다.)
 
-### 지원 입력 확장자
+### 지원하는 파일 유형
 
-현재 다음의 확장자를 지원합니다.
+FFmpeg concat demuxer + 스트림 복사 병합이 가능한 파일 유형을 지원합니다.
 
 - `.mp4`
-- `.mov`
-- `.mkv`
 - `.m4v`
+- `.mov`
+- `.3gp`
+- `.3g2`
+- `.mkv`
+- `.webm`
+- `.avi`
+- `.ts`
+- `.mts`
+- `.m2ts`
+- `.mpeg`
+- `.mpg`
+- `.vob`
+- `.flv`
+- `.f4v`
+- `.ogv`
+- `.ogg`
+- `.mxf`
+- `.wmv`
+- `.asf`
+- `.wtv`
+- `.nut`
+- `.dv`
 
-FFmpeg에서 지원하는 다른 형식의 아직 지원하지 않습니다.
+다만 실제 지원 여부는 설치된 FFmpeg 빌드에 따라 달라질 수 있습니다. 최종 파일은 원본 확장자를 사용하므로, 설치된 FFmpeg이 해당 파일 형식의 출력을 지원해야 합니다.
 
 ### 작동 방식
 

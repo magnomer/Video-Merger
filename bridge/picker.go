@@ -1,6 +1,11 @@
 package bridge
 
-import "github.com/wailsapp/wails/v2/pkg/runtime"
+import (
+	"strings"
+	"video-merger/backend"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
+)
 
 func (a *LProgram) LPickerFileOpen() ([]string, error) {
 	return runtime.OpenMultipleFilesDialog(a.LRuntimeContext, runtime.OpenDialogOptions{
@@ -8,7 +13,7 @@ func (a *LProgram) LPickerFileOpen() ([]string, error) {
 		Filters: []runtime.FileFilter{
 			{
 				DisplayName: "Video files",
-				Pattern:     "*.mp4;*.mov;*.mkv;*.m4v",
+				Pattern:     LPickerPatternRead(),
 			},
 		},
 	})
@@ -34,4 +39,13 @@ func (a *LProgram) LPickerFFmpegOpen() (string, error) {
 			},
 		},
 	})
+}
+
+func LPickerPatternRead() string {
+	patterns := make([]string, 0, len(backend.LClipSupportedExtensionList))
+	for _, extension := range backend.LClipSupportedExtensionList {
+		patterns = append(patterns, "*"+extension)
+	}
+
+	return strings.Join(patterns, ";")
 }
