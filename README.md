@@ -6,12 +6,16 @@ KO · 번호가 붙은 동영상 조각을 자동으로 찾고, 안전하게 이
 
 > Built with the help of Claude and ChatGPT (Vibe coding). This is a personal project, so bugs may still exist.
 
+<br><br>
+
 <div align="center">
 <a href="#english"><img alt="English" src="https://img.shields.io/badge/English-Read-blue?style=for-the-badge"></a>
 &nbsp;&nbsp;
 <a href="#한국어"><img alt="한국어" src="https://img.shields.io/badge/한국어-읽기-brightgreen?style=for-the-badge"></a>
 
 </div>
+
+<br><br>
 
 ---
 
