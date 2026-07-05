@@ -12,7 +12,7 @@ type LMetric struct {
 	LMetricLoudness *float64
 }
 
-func LMetricMeasure(LRuntimeContext context.Context, path string) LMetric {
+func LMetricMeasure(LRuntimeContext context.Context, preference LPreference, path string) LMetric {
 	metrics := LMetric{}
 
 	info, err := os.Stat(path)
@@ -20,7 +20,7 @@ func LMetricMeasure(LRuntimeContext context.Context, path string) LMetric {
 		metrics.LMetricSize = info.Size()
 	}
 
-	probe, err := LProbeRun(LRuntimeContext, path)
+	probe, err := LProbeRun(LRuntimeContext, preference, path)
 	if err == nil {
 		duration, parseErr := strconv.ParseFloat(probe.LProbeFormat.LMetricDuration, 64)
 		if parseErr == nil {
@@ -29,14 +29,14 @@ func LMetricMeasure(LRuntimeContext context.Context, path string) LMetric {
 	}
 
 	if LRuntimeContext.Err() == nil {
-		metrics.LMetricLoudness = LLoudnessMeasure(LRuntimeContext, path)
+		metrics.LMetricLoudness = LLoudnessMeasure(LRuntimeContext, preference, path)
 	}
 
 	return metrics
 }
 
-func LMetricSet(LRuntimeContext context.Context, result *LMergerResult) {
-	metrics := LMetricMeasure(LRuntimeContext, result.LDestinationPath)
+func LMetricSet(LRuntimeContext context.Context, preference LPreference, result *LMergerResult) {
+	metrics := LMetricMeasure(LRuntimeContext, preference, result.LDestinationPath)
 	result.LMetricSize = metrics.LMetricSize
 	result.LMetricDuration = metrics.LMetricDuration
 	result.LMetricLoudness = metrics.LMetricLoudness

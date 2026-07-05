@@ -1,9 +1,6 @@
 package backend
 
-import (
-	"net/http"
-	"os"
-)
+import "net/http"
 
 const LAssetVideoRoute = "/LAssetVideoRead.mp4"
 
@@ -24,24 +21,20 @@ func LAssetVideoRead(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	path := request.URL.Query().Get("path")
-	if path == "" {
-		http.Error(response, "missing video path", http.StatusBadRequest)
+	id := request.URL.Query().Get("asset")
+	if id == "" {
+		http.Error(response, "missing video asset", http.StatusBadRequest)
 		return
 	}
 
-	info, err := os.Stat(path)
-	if err != nil || info.IsDir() {
+	file, info, err := LAssetFileOpen(id, request.URL.Query().Get("preview") == "compatibility")
+	if err != nil {
 		http.NotFound(response, request)
 		return
 	}
-
-	servedPath, err := LAssetPreviewResolve(path, info)
-	if err != nil {
-		servedPath = path
-	}
+	defer file.Close()
 
 	response.Header().Set("Cache-Control", "no-store")
 	response.Header().Set("Accept-Ranges", "bytes")
-	http.ServeFile(response, request, servedPath)
+	http.ServeContent(response, request, info.Name(), info.ModTime(), file)
 }

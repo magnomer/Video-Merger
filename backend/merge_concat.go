@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-func LMergerConcatRun(LRuntimeContext context.Context, group LBatch, outputPath string) LMergerResult {
+func LMergerConcatRun(LRuntimeContext context.Context, options LPreference, group LBatch, outputPath string) LMergerResult {
 	if LRuntimeContext.Err() != nil {
 		return LMergerResult{
 			LTaskSuccess: false,
@@ -15,7 +15,7 @@ func LMergerConcatRun(LRuntimeContext context.Context, group LBatch, outputPath 
 		}
 	}
 
-	listFilePath, err := LConcatCreate(group)
+	listFilePath, err := LConcatCreate(options, group)
 	if err != nil {
 		return LMergerResult{
 			LTaskSuccess: false,
@@ -26,7 +26,7 @@ func LMergerConcatRun(LRuntimeContext context.Context, group LBatch, outputPath 
 
 	cmd := exec.CommandContext(
 		LRuntimeContext,
-		"ffmpeg",
+		LCommandFFmpegRead(options),
 		"-f", "concat",
 		"-safe", "0",
 		"-i", listFilePath,
@@ -57,7 +57,7 @@ func LMergerConcatRun(LRuntimeContext context.Context, group LBatch, outputPath 
 		LTaskSuccess:     true,
 		LTaskMessage:     "Merge completed successfully.",
 	}
-	LMetricSet(LRuntimeContext, &result)
+	LMetricSet(LRuntimeContext, options, &result)
 
 	return result
 }

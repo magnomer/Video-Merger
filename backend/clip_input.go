@@ -4,6 +4,7 @@ import "context"
 
 func LClipInputResolve(
 	LRuntimeContext context.Context,
+	preference LPreference,
 	cleanInputPath string,
 	isDirectory bool,
 	includeSubfolders bool,
@@ -11,10 +12,10 @@ func LClipInputResolve(
 	marker LMarker,
 ) ([]LClip, error) {
 	if isDirectory {
-		return LClipFolderResolve(LRuntimeContext, cleanInputPath, includeSubfolders, seen, marker)
+		return LClipFolderResolve(LRuntimeContext, preference, cleanInputPath, includeSubfolders, seen, marker)
 	}
 
-	file, ok, err := LClipFileResolve(LRuntimeContext, cleanInputPath, "", seen, marker)
+	file, ok, err := LClipFileResolve(LRuntimeContext, preference, cleanInputPath, "", seen, marker)
 	if err != nil || !ok {
 		return nil, err
 	}

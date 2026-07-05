@@ -24,7 +24,7 @@ func LInspectionGroupRun(
 		result.LTaskMessage = "Analyzing " + group.LBatchName
 		LReportEmit(onReport, LReportCreate(result, false))
 
-		compatibility, err := LCompatibilityCheck(LRuntimeContext, group)
+		compatibility, err := LCompatibilityCheck(LRuntimeContext, options, group)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				result.LTaskCancel = true

@@ -8,10 +8,10 @@
 .PTimelineHead { justify-content: space-between; color: #111827; font-weight: 700; }
 .PTimelineTotal { color: #64748b; font-size: 13px; font-weight: 500; }
 .PTimelineScale { display: flex; justify-content: space-between; margin-top: 9px; color: #334155; font-size: 12px; font-variant-numeric: tabular-nums; }
-.PTimelineTrack { display: flex; gap: 4px; margin-top: 6px; min-height: 84px; cursor: pointer; }
+.PTimelineTrack { display: flex; gap: 4px; margin-top: 6px; min-height: 84px; }
 .PTimelineTrack > .PPlaceholder { flex: 1 1 100%; min-height: 120px; }
-.PSegment { position: relative; min-width: 104px; flex: 1 1 0; display: grid; place-items: center; padding: 11px 8px; border-radius: 12px; border: 1px solid #7aafe9; background: linear-gradient(180deg, #f6fbff, #eaf3ff); color: #111827; text-align: center; font-size: 12px; }
-.PSegmentMissing { border-color: #ffb66f; border-style: dashed; background: linear-gradient(180deg, #fff8f1, #fff1dc); }
+.PSegment { cursor: pointer; position: relative; min-width: 104px; flex: 1 1 0; display: grid; place-items: center; padding: 11px 8px; border-radius: 12px; border: 1px solid #7aafe9; background: linear-gradient(180deg, #f6fbff, #eaf3ff); color: #111827; text-align: center; font-size: 12px; }
+.PSegmentMissing { cursor: default; border-color: #ffb66f; border-style: dashed; background: linear-gradient(180deg, #fff8f1, #fff1dc); }
 .PSegmentIssue::after { content: "▲"; position: absolute; right: 15px; top: 10px; color: var(--error); font-size: 18px; }
 .PSegment strong { display: block; margin-bottom: 5px; font-size: 17px; }
 .PSegment span { display: block; overflow: hidden; max-width: 100%; text-overflow: ellipsis; white-space: nowrap; }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func LMergerCopyRun(LRuntimeContext context.Context, group LBatch, outputPath string) LMergerResult {
+func LMergerCopyRun(LRuntimeContext context.Context, options LPreference, group LBatch, outputPath string) LMergerResult {
 	err := LDiskCancelCopy(LRuntimeContext, group.LBatchClip[0].LClipPath, outputPath)
 	if err != nil {
 		if LRuntimeContext.Err() != nil {
@@ -26,7 +26,7 @@ func LMergerCopyRun(LRuntimeContext context.Context, group LBatch, outputPath st
 		LTaskSuccess:     true,
 		LTaskMessage:     "Single-file group copied successfully.",
 	}
-	LMetricSet(LRuntimeContext, &result)
+	LMetricSet(LRuntimeContext, options, &result)
 
 	return result
 }

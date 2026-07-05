@@ -14,6 +14,7 @@ func LReportFileCreate(files []LClip) []LReportFile {
 			LReportNumber:         file.LClipNumber,
 			LReportName:           file.LClipName,
 			LReportPath:           file.LClipPath,
+			LReportAsset:          LAssetIDRead(file.LClipPath),
 			LReportDurationSecond: file.LMetricDuration,
 		})
 	}

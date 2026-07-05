@@ -1,5 +1,7 @@
-function PPreviewUrlRead(path) {
-  return `/LAssetVideoRead.mp4?path=${encodeURIComponent(String(path || ""))}`;
+function PPreviewUrlRead(asset, compatibility) {
+  const query = new URLSearchParams({ asset: String(asset || "") });
+  if (compatibility) query.set("preview", "compatibility");
+  return `/LAssetVideoRead.mp4?${query.toString()}`;
 }
 
 function PPreviewIconShow(name) {

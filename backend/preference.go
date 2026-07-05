@@ -19,6 +19,8 @@ type LPreference struct {
 	LPreferencePattern    string   `json:"LPreferencePattern"`
 	LPreferenceCustom     bool     `json:"LPreferenceCustom"`
 	LPreferenceUnnumbered bool     `json:"LPreferenceUnnumbered"`
+	LPreferenceFFmpeg     string   `json:"LPreferenceFFmpeg"`
+	LPreferenceTemporary  string   `json:"LPreferenceTemporary"`
 }
 
 func LPreferenceLoad() (LPreference, error) {
@@ -51,6 +53,8 @@ func LPreferenceSave(preference LPreference) error {
 
 	preference.LPreferenceSuffix = strings.TrimSpace(preference.LPreferenceSuffix)
 	preference.LPreferencePattern = strings.TrimSpace(preference.LPreferencePattern)
+	preference.LPreferenceFFmpeg = strings.TrimSpace(preference.LPreferenceFFmpeg)
+	preference.LPreferenceTemporary = strings.TrimSpace(preference.LPreferenceTemporary)
 
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return err

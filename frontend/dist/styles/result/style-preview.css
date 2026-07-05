@@ -27,6 +27,8 @@
   pointer-events: none;
 }
 .PPreviewFrame[hidden] { display: none; }
+.PPreviewNotice { position: absolute; left: 18px; right: 18px; bottom: 64px; z-index: 3; padding: 10px 12px; border-radius: 7px; background: rgba(15, 23, 42, 0.86); color: #fff; font-size: 12px; font-weight: 700; line-height: 16px; }
+.PPreviewNotice[hidden] { display: none; }
 .PPreviewControl { position: relative; z-index: 2; min-height: 54px; gap: 20px; padding: 0 28px; color: #fff; background: linear-gradient(180deg, rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.94)); }
 .PPreviewPlay, .PPreviewSkip, .PPreviewFull { display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: #fff; box-shadow: none; }
 .PPreviewPlay { width: 30px; min-width: 30px; }

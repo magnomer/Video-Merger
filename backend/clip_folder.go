@@ -7,6 +7,7 @@ import (
 
 func LClipFolderResolve(
 	LRuntimeContext context.Context,
+	preference LPreference,
 	cleanInputPath string,
 	includeSubfolders bool,
 	seen map[string]bool,
@@ -31,7 +32,7 @@ func LClipFolderResolve(
 			relativeDir = ""
 		}
 
-		file, ok, err := LClipFileResolve(LRuntimeContext, normalizedPath, relativeDir, seen, marker)
+		file, ok, err := LClipFileResolve(LRuntimeContext, preference, normalizedPath, relativeDir, seen, marker)
 		if err != nil {
 			return nil, err
 		}

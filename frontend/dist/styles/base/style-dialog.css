@@ -27,7 +27,7 @@
   justify-content: space-between;
   min-height: 42px;
   padding: 0 10px 0 16px;
-  border-bottom: 1px solid var(--button-border);
+  border-bottom: 1px solid var(--line);
   background: #f8f9fb;
 }
 
@@ -116,6 +116,10 @@
   border-radius: 8px;
   background: #ffffff;
   box-shadow: 0 18px 48px rgba(17, 24, 39, 0.22);
+  --PSSettingControlLine: #d8dee8;
+  --PSSettingDisabledLine: #e3e8ef;
+  --PSSettingDisabledFill: #f8fafc;
+  --PSSettingDisabledText: #9ca3af;
 }
 
 .PSSettingHeader {
@@ -124,7 +128,7 @@
   justify-content: space-between;
   min-height: 42px;
   padding: 0 10px 0 16px;
-  border-bottom: 1px solid var(--button-border);
+  border-bottom: 1px solid var(--line);
   background: #f8f9fb;
 }
 
@@ -183,13 +187,18 @@
   height: 34px;
   margin: 0 0 14px;
   padding: 0 10px;
-  border: 1px solid var(--button-border);
+  border: 1px solid var(--PSSettingControlLine);
   border-radius: 6px;
-  background: #ffffff;
+  background-color: #ffffff;
+  color: var(--text);
+  box-shadow: none;
 }
 
 .PSSettingSelect:disabled {
-  opacity: 0.55;
+  opacity: 1;
+  border-color: var(--PSSettingDisabledLine);
+  background-color: var(--PSSettingDisabledFill);
+  color: var(--PSSettingDisabledText);
 }
 
 .PSSettingCheck {
@@ -207,29 +216,93 @@
   width: 100%;
   height: 34px;
   padding: 0 10px;
-  border: 1px solid var(--button-border);
+  border: 1px solid var(--PSSettingControlLine);
   border-radius: 6px;
+  background: #ffffff;
+  color: var(--text);
+  font-family: inherit;
+}
+
+#PSSettingPattern {
   font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
 }
 
 .PSSettingRow input:disabled {
-  opacity: 0.55;
-  background: #f3f4f6;
+  opacity: 1;
+  border-color: var(--PSSettingDisabledLine);
+  background: var(--PSSettingDisabledFill);
+  color: var(--PSSettingDisabledText);
 }
 
 .PSSettingSample {
   margin-top: 4px;
   padding: 8px 10px;
+  border: 1px solid var(--PSSettingControlLine);
   border-radius: 6px;
-  background: #f3f4f6;
+  background: #ffffff;
   color: #1f2933;
-  font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
   font-size: 12px;
+  line-height: 1.7;
   min-height: 18px;
+  white-space: pre-wrap;
 }
 
 .PSSettingFooter {
   display: flex;
   justify-content: flex-end;
   padding: 0 16px 16px;
+}
+
+.PSSettingSection {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.PSSettingPath {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.PSSettingPath input {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--PSSettingDisabledLine);
+  border-radius: 6px;
+  background: var(--PSSettingDisabledFill);
+  color: var(--muted);
+  font-family: inherit;
+}
+
+.PSSettingPath input::placeholder {
+  color: var(--PSSettingDisabledText);
+  opacity: 1;
+}
+
+.PSSettingBrowse,
+.PSSettingClean button,
+.PSSettingFooter button {
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--PSSettingControlLine);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+}
+
+.PSSettingClean {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.PSSettingClean span {
+  color: var(--muted);
+  font-size: 12px;
 }

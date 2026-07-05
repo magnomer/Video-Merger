@@ -14,7 +14,8 @@ import (
 var LAssetPreviewLock sync.Mutex
 
 func LAssetPreviewResolve(sourcePath string, sourceInfo os.FileInfo) (string, error) {
-	cachePath, err := LAssetPreviewPathRead(sourcePath, sourceInfo)
+	preference, _ := LPreferenceLoad()
+	cachePath, err := LAssetPreviewPathRead(preference, sourcePath, sourceInfo)
 	if err != nil {
 		return "", err
 	}
@@ -39,7 +40,7 @@ func LAssetPreviewResolve(sourcePath string, sourceInfo os.FileInfo) (string, er
 	defer os.Remove(temporaryPath)
 
 	cmd := exec.Command(
-		"ffmpeg",
+		LCommandFFmpegRead(preference),
 		"-y",
 		"-hide_banner",
 		"-loglevel", "error",
@@ -68,7 +69,7 @@ func LAssetPreviewResolve(sourcePath string, sourceInfo os.FileInfo) (string, er
 	return cachePath, nil
 }
 
-func LAssetPreviewPathRead(sourcePath string, sourceInfo os.FileInfo) (string, error) {
+func LAssetPreviewPathRead(preference LPreference, sourcePath string, sourceInfo os.FileInfo) (string, error) {
 	absolutePath, err := filepath.Abs(sourcePath)
 	if err != nil {
 		return "", err
@@ -78,7 +79,7 @@ func LAssetPreviewPathRead(sourcePath string, sourceInfo os.FileInfo) (string, e
 	sum := sha1.Sum([]byte(seed))
 	name := hex.EncodeToString(sum[:]) + ".mp4"
 
-	return filepath.Join(os.TempDir(), "VideoMergerPreview", name), nil
+	return filepath.Join(LTemporaryRootRead(preference), name), nil
 }
 
 func LAssetFileCheck(path string) bool {

@@ -13,7 +13,7 @@ type LCompatibility struct {
 	LCompatibilityWarning []string `json:"LCompatibilityWarning"`
 }
 
-func LCompatibilityCheck(LRuntimeContext context.Context, group LBatch) (LCompatibility, error) {
+func LCompatibilityCheck(LRuntimeContext context.Context, preference LPreference, group LBatch) (LCompatibility, error) {
 	report := LCompatibility{
 		LBatchName:          group.LBatchName,
 		LCompatibilityState: true,
@@ -24,7 +24,7 @@ func LCompatibilityCheck(LRuntimeContext context.Context, group LBatch) (LCompat
 		return report, nil
 	}
 
-	firstProbe, err := LProbeRun(LRuntimeContext, group.LBatchClip[0].LClipPath)
+	firstProbe, err := LProbeRun(LRuntimeContext, preference, group.LBatchClip[0].LClipPath)
 	if err != nil {
 		if LRuntimeContext.Err() != nil {
 			return LCompatibility{}, LRuntimeContext.Err()
@@ -42,7 +42,7 @@ func LCompatibilityCheck(LRuntimeContext context.Context, group LBatch) (LCompat
 			return LCompatibility{}, LRuntimeContext.Err()
 		}
 
-		currentProbe, err := LProbeRun(LRuntimeContext, file.LClipPath)
+		currentProbe, err := LProbeRun(LRuntimeContext, preference, file.LClipPath)
 		if err != nil {
 			if LRuntimeContext.Err() != nil {
 				return LCompatibility{}, LRuntimeContext.Err()

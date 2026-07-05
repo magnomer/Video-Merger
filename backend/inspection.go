@@ -31,7 +31,7 @@ func LInspectionCoreRun(LRuntimeContext context.Context, options LPreference, on
 		return LRouteResult{}, err
 	}
 
-	mediaFiles, err := LClipResolve(LRuntimeContext, options.LPreferenceInput, options.LPreferenceTree, marker)
+	mediaFiles, err := LClipResolve(LRuntimeContext, options, options.LPreferenceInput, options.LPreferenceTree, marker)
 	if err != nil {
 		return LInspectionResolveErrorRead(result, err)
 	}

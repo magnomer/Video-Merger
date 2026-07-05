@@ -31,6 +31,7 @@ type LReportFile struct {
 	LReportNumber         int     `json:"LReportNumber"`
 	LReportName           string  `json:"LReportName"`
 	LReportPath           string  `json:"LReportPath"`
+	LReportAsset          string  `json:"LReportAsset"`
 	LReportDurationSecond float64 `json:"LReportDurationSecond"`
 }
 

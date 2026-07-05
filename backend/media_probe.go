@@ -30,10 +30,10 @@ type LProbeFormat struct {
 	LProbeFormatName string `json:"format_name"`
 }
 
-func LProbeRun(LRuntimeContext context.Context, path string) (LProbe, error) {
+func LProbeRun(LRuntimeContext context.Context, preference LPreference, path string) (LProbe, error) {
 	cmd := exec.CommandContext(
 		LRuntimeContext,
-		"ffprobe",
+		LCommandFFprobeRead(preference),
 		"-v", "quiet",
 		"-print_format", "json",
 		"-show_streams",

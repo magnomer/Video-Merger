@@ -19,3 +19,19 @@ func (a *LProgram) LPickerFolderOpen() (string, error) {
 		Title: "Select folder",
 	})
 }
+
+func (a *LProgram) LPickerFFmpegOpen() (string, error) {
+	return runtime.OpenFileDialog(a.LRuntimeContext, runtime.OpenDialogOptions{
+		Title: "Select ffmpeg executable",
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "FFmpeg executable",
+				Pattern:     "ffmpeg.exe;ffmpeg",
+			},
+			{
+				DisplayName: "Executable files",
+				Pattern:     "*.exe",
+			},
+		},
+	})
+}

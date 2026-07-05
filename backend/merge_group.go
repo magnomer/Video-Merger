@@ -20,6 +20,7 @@ func LMergerGroupRun(
 ) LMergerResult {
 	return LMergerCancelRun(
 		LRuntimeContext,
+		options,
 		group,
 		groupResult.LBatchCompatibility,
 		groupResult.LBatchPlan,

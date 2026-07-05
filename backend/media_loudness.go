@@ -11,10 +11,10 @@ import (
 
 var LLoudnessPattern = regexp.MustCompile(`(?m)^\s*I:\s*(-?\d+(?:\.\d+)?)\s+LUFS`)
 
-func LLoudnessMeasure(LRuntimeContext context.Context, path string) *float64 {
+func LLoudnessMeasure(LRuntimeContext context.Context, preference LPreference, path string) *float64 {
 	cmd := exec.CommandContext(
 		LRuntimeContext,
-		"ffmpeg",
+		LCommandFFmpegRead(preference),
 		"-hide_banner",
 		"-nostats",
 		"-i", path,

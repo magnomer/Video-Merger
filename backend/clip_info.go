@@ -21,13 +21,13 @@ func LClipCheck(path string) bool {
 	return supportedExtensions[extension]
 }
 
-func LClipSet(LRuntimeContext context.Context, file *LClip) error {
+func LClipSet(LRuntimeContext context.Context, preference LPreference, file *LClip) error {
 	info, err := os.Stat(file.LClipPath)
 	if err == nil {
 		file.LMetricSize = info.Size()
 	}
 
-	probe, err := LProbeRun(LRuntimeContext, file.LClipPath)
+	probe, err := LProbeRun(LRuntimeContext, preference, file.LClipPath)
 	if err != nil {
 		if LRuntimeContext.Err() != nil {
 			return LRuntimeContext.Err()

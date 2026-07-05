@@ -4,6 +4,7 @@ import "context"
 
 func LClipFileResolve(
 	LRuntimeContext context.Context,
+	preference LPreference,
 	path string,
 	batchDirectory string,
 	seen map[string]bool,
@@ -23,7 +24,7 @@ func LClipFileResolve(
 		return LClip{}, false, nil
 	}
 
-	if err := LClipSet(LRuntimeContext, &mediaFile); err != nil {
+	if err := LClipSet(LRuntimeContext, preference, &mediaFile); err != nil {
 		return LClip{}, false, err
 	}
 

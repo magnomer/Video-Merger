@@ -5,8 +5,8 @@ import (
 	"fmt"
 )
 
-func LMergerBatchRun(LRuntimeContext context.Context, group LBatch, outputFolder string, suffix string, ignoreCautions bool, forceMergeWarnings bool) LMergerResult {
-	compatibility, err := LCompatibilityCheck(LRuntimeContext, group)
+func LMergerBatchRun(LRuntimeContext context.Context, options LPreference, group LBatch, outputFolder string, suffix string, ignoreCautions bool, forceMergeWarnings bool) LMergerResult {
+	compatibility, err := LCompatibilityCheck(LRuntimeContext, options, group)
 	if err != nil {
 		if LRuntimeContext.Err() != nil {
 			return LMergerResult{
@@ -23,11 +23,12 @@ func LMergerBatchRun(LRuntimeContext context.Context, group LBatch, outputFolder
 
 	outputPath := LDestinationFind(outputFolder, group.LBatchName+suffix, group.LClipExtension)
 
-	return LMergerCancelRun(LRuntimeContext, group, compatibility, outputPath, ignoreCautions, forceMergeWarnings)
+	return LMergerCancelRun(LRuntimeContext, options, group, compatibility, outputPath, ignoreCautions, forceMergeWarnings)
 }
 
 func LMergerCancelRun(
 	LRuntimeContext context.Context,
+	options LPreference,
 	group LBatch,
 	compatibility LCompatibility,
 	outputPath string,
@@ -39,8 +40,8 @@ func LMergerCancelRun(
 	}
 
 	if len(group.LBatchClip) == 1 {
-		return LMergerCopyRun(LRuntimeContext, group, outputPath)
+		return LMergerCopyRun(LRuntimeContext, options, group, outputPath)
 	}
 
-	return LMergerConcatRun(LRuntimeContext, group, outputPath)
+	return LMergerConcatRun(LRuntimeContext, options, group, outputPath)
 }

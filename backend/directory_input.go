@@ -3,7 +3,7 @@ package backend
 import "context"
 
 func LInputResolve(inputPaths []string) ([]string, error) {
-	mediaFiles, err := LClipResolve(context.Background(), inputPaths, false, LMarkerDefaultCreate())
+	mediaFiles, err := LClipResolve(context.Background(), LPreference{}, inputPaths, false, LMarkerDefaultCreate())
 	if err != nil {
 		return nil, err
 	}

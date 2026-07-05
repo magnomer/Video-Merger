@@ -1,25 +1,10 @@
-const PSSettingPresetMap = {
-  paren: /^(.+?)\s*\((\d+)\)$/,
-  bracket: /^(.+?)\s*\[(\d+)\]$/,
-  underscore: /^(.+?)_(\d+)$/,
-  dash: /^(.+?)\s*-\s*(\d+)$/,
-  space: /^(.+?)\s+(\d+)$/,
-  dot: /^(.+?)\.(\d+)$/,
-};
-
-const PSSettingSampleMap = {
-  paren: "Trip (1).mp4",
-  bracket: "Trip [1].mp4",
-  underscore: "Trip_1.mp4",
-  dash: "Trip - 1.mp4",
-  space: "Trip 1.mp4",
-  dot: "Trip.1.mp4",
-};
-
 function PSSettingStart() {
   PFrameSetting.addEventListener("click", PSSettingOpen);
   PSSettingButton.addEventListener("click", PSSettingClose);
   PSSettingIcon.addEventListener("click", PSSettingClose);
+  PSSettingFFmpegButton.addEventListener("click", PSSettingFFmpegOpen);
+  PSSettingTemporaryButton.addEventListener("click", PSSettingTemporaryOpen);
+  PSSettingCleanButton.addEventListener("click", PSSettingCleanRun);
 
   PSSettingBackdrop.addEventListener("click", event => {
     if (event.target === PSSettingBackdrop) {
@@ -33,7 +18,7 @@ function PSSettingStart() {
     }
   });
 
-  [PSSettingStyle, PSSettingCustom, PSSettingPattern, PSSettingUnnumbered].forEach(element => {
+  [PSSettingStyle, PSSettingCustom, PSSettingPattern, PSSettingUnnumbered, PSSettingFFmpeg, PSSettingTemporary].forEach(element => {
     element.addEventListener("input", PSSettingChangeSet);
     element.addEventListener("change", PSSettingChangeSet);
   });
@@ -68,43 +53,63 @@ function PSSettingStateSet() {
 }
 
 function PSSettingSampleSet() {
-  let pattern;
-  let sampleName;
+  PSSettingSample.textContent = `Trip.mp4      → group: Trip, number: 0
+Trip (1).mp4 → group: Trip, number: 1
+Trip (2).mp4 → group: Trip, number: 2`;
+}
 
-  if (PSSettingCustom.checked) {
-    sampleName = PSSettingSampleMap.paren;
-    const expression = PSSettingPattern.value.trim();
 
-    if (expression === "") {
-      PSSettingSample.textContent = PLanguageTextRead("settingSampleEmpty");
+
+async function PSSettingFFmpegOpen() {
+  try {
+    const selectedPath = await window.go.bridge.LProgram.LPickerFFmpegOpen();
+
+    if (!selectedPath) {
       return;
     }
 
-    try {
-      pattern = new RegExp(expression);
-    } catch {
-      PSSettingSample.textContent = PLanguageTextRead("settingSampleInvalid");
+    PSSettingFFmpeg.value = selectedPath;
+    PSSettingChangeSet();
+  } catch (error) {
+    PSSettingCleanStatus.textContent = `${PLanguageTextRead("settingFFmpegError")} ${error}`;
+  }
+}
+
+async function PSSettingTemporaryOpen() {
+  try {
+    const selectedFolder = await window.go.bridge.LProgram.LPickerFolderOpen();
+
+    if (!selectedFolder) {
       return;
     }
-  } else {
-    const style = PSSettingStyle.value;
-    pattern = PSSettingPresetMap[style] || PSSettingPresetMap.paren;
-    sampleName = PSSettingSampleMap[style] || PSSettingSampleMap.paren;
+
+    PSSettingTemporary.value = selectedFolder;
+    PSSettingChangeSet();
+  } catch (error) {
+    PSSettingCleanStatus.textContent = `${PLanguageTextRead("settingTemporaryError")} ${error}`;
   }
+}
 
-  const stem = sampleName.replace(/\.[^.]+$/, "");
-  const matches = stem.match(pattern);
-  const prefix = `${PLanguageTextRead("settingSample")} ${sampleName} → `;
-
-  if (matches && matches[2] !== undefined) {
-    PSSettingSample.textContent = `${prefix}${(matches[1] || "").trim()} · ${matches[2]}`;
+async function PSSettingCleanRun() {
+  if (!window.go?.bridge?.LProgram?.LTemporaryClean) {
     return;
   }
 
-  if (PSSettingUnnumbered.checked) {
-    PSSettingSample.textContent = `${prefix}${stem} (${PLanguageTextRead("settingSampleNoNumber")})`;
-    return;
-  }
+  try {
+    PSSettingCleanButton.disabled = true;
+    PSSettingCleanStatus.textContent = PLanguageTextRead("settingCleanWorking");
 
-  PSSettingSample.textContent = `${prefix}${PLanguageTextRead("settingSampleNone")}`;
+    if (typeof POptionSave === "function") {
+      await POptionSave();
+    }
+
+    const result = await window.go.bridge.LProgram.LTemporaryClean(POptionRead());
+    PSSettingCleanStatus.textContent = PLanguageTextRead("settingCleanDone")
+      .replace("{count}", result.LTemporaryCount)
+      .replace("{path}", result.LTemporaryPath);
+  } catch (error) {
+    PSSettingCleanStatus.textContent = `${PLanguageTextRead("settingCleanError")} ${error}`;
+  } finally {
+    PSSettingCleanButton.disabled = false;
+  }
 }

@@ -1,10 +1,20 @@
+let PPreviewSessionStopSet = null;
+
+function PPreviewStop() {
+  if (typeof PPreviewSessionStopSet === "function") {
+    PPreviewSessionStopSet();
+    PPreviewSessionStopSet = null;
+  }
+}
+
 function PPreviewStart(group) {
+  PPreviewStop();
   const view = PPreviewViewRead(group);
   if (!view.video || view.files.length === 0) {
     return;
   }
 
-  const state = { files: view.files, index: 0, seeking: false, playing: false, resume: false, pendingSecond: null, readyKey: 0 };
+  const state = { files: view.files, index: 0, seeking: false, playing: false, resume: false, pendingSecond: null, readyKey: 0, active: true };
   const offsets = PPreviewOffsetRead(view.files);
   const totalSeconds = offsets[offsets.length - 1] || 0;
 
@@ -12,10 +22,36 @@ function PPreviewStart(group) {
   view.total.textContent = PPreviewTimeRead(totalSeconds) || group.LReportDuration || "00:00";
   view.video.volume = Math.max(0, Math.min(1, Number(view.volume?.value || 72) / 100));
 
-  const load = (index, shouldPlay, targetSecond = 0) => PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view);
+  const load = (index, shouldPlay, targetSecond = 0, compatibility = false) => PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view, compatibility);
 
+  PPreviewSessionStopSet = () => PPreviewSessionStop(state, view);
   PPreviewEventStart(state, offsets, view, load);
   load(0, false);
+}
+
+function PPreviewSessionStop(state, view) {
+  state.active = false;
+  state.seeking = false;
+  state.playing = false;
+  state.resume = false;
+  state.readyKey += 1;
+
+  if (!view?.video) {
+    return;
+  }
+
+  try {
+    view.video.pause();
+  } catch (_) {}
+
+  view.video.onloadedmetadata = null;
+  view.video.removeAttribute("src");
+  view.video.removeAttribute("data-preview-asset");
+  view.video.removeAttribute("data-preview-compatibility");
+
+  try {
+    view.video.load();
+  } catch (_) {}
 }
 
 function PPreviewViewRead(group) {
@@ -29,42 +65,53 @@ function PPreviewViewRead(group) {
     tag: document.getElementById("PPreviewTag"),
     full: document.getElementById("PPreviewFull"),
     volume: document.getElementById("PPreviewVolume"),
+    notice: document.getElementById("PPreviewNotice"),
     timeline: document.querySelector(".PTimelineTrack"),
-    files: (group?.LReportFile || []).slice().sort((a, b) => a.LReportNumber - b.LReportNumber).filter(file => file.LReportPath),
+    files: (group?.LReportFile || []).slice().sort((a, b) => a.LReportNumber - b.LReportNumber).filter(file => file.LReportAsset),
   };
 }
 
-function PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view) {
+function PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view, compatibility = false) {
+  if (!state.active) {
+    return;
+  }
+
   state.index = Math.max(0, Math.min(index, state.files.length - 1));
   state.resume = shouldPlay;
   PPreviewTargetSet(state, view.slider, view.now, (offsets[state.index] || 0) + Math.max(0, targetSecond || 0));
   const readyKey = state.readyKey + 1;
   state.readyKey = readyKey;
   const ready = () => {
-    if (readyKey === state.readyKey) {
+    if (state.active && readyKey === state.readyKey) {
       PPreviewTargetClear(state, offsets, view.video, view.slider, view.now);
     }
   };
   view.tag.textContent = `${state.index + 1} / ${state.files.length} ${PLanguageTextRead("playback")}`;
 
-  const source = PPreviewUrlRead(state.files[state.index].LReportPath);
+  const source = PPreviewUrlRead(state.files[state.index].LReportAsset, compatibility);
   if (view.video.src.endsWith(source)) {
     const second = Math.max(0, targetSecond);
     PPreviewFrameShow(view);
     PPreviewFrameReadySet(view, second, false, ready);
     view.video.currentTime = second;
     PPreviewTimeSet(state, offsets, view.video, view.slider, view.now);
-    if (shouldPlay) view.video.play().catch(() => {});
+    if (state.active && shouldPlay) view.video.play().catch(() => {});
     return;
   }
 
   PPreviewFrameShow(view);
+  view.video.dataset.previewAsset = state.files[state.index].LReportAsset;
+  view.video.dataset.previewCompatibility = compatibility ? "true" : "false";
   view.video.onloadedmetadata = () => {
+    if (!state.active || readyKey !== state.readyKey) {
+      return;
+    }
+
     const second = Math.max(0, targetSecond);
     PPreviewFrameReadySet(view, second, true, ready);
     view.video.currentTime = second;
     PPreviewTimeSet(state, offsets, view.video, view.slider, view.now);
-    if (state.resume) view.video.play().catch(() => {});
+    if (state.active && state.resume) view.video.play().catch(() => {});
   };
   view.video.src = source;
 }

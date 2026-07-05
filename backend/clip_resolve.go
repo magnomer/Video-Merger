@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func LClipResolve(LRuntimeContext context.Context, inputPaths []string, includeSubfolders bool, marker LMarker) ([]LClip, error) {
+func LClipResolve(LRuntimeContext context.Context, preference LPreference, inputPaths []string, includeSubfolders bool, marker LMarker) ([]LClip, error) {
 	mediaFiles := []LClip{}
 	seen := map[string]bool{}
 
@@ -27,7 +27,7 @@ func LClipResolve(LRuntimeContext context.Context, inputPaths []string, includeS
 			return nil, err
 		}
 
-		resolvedFiles, err := LClipInputResolve(LRuntimeContext, cleanInputPath, info.IsDir(), includeSubfolders, seen, marker)
+		resolvedFiles, err := LClipInputResolve(LRuntimeContext, preference, cleanInputPath, info.IsDir(), includeSubfolders, seen, marker)
 		if err != nil {
 			return nil, err
 		}

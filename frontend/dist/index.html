@@ -199,8 +199,28 @@
         </button>
       </header>
       <div class="PSSettingBody">
-        <h3 class="PSSettingHeading">Part detection</h3>
-        <p class="PSSettingLead">Choose how numbered parts of one group are recognized from filenames.</p>
+        <h3 class="PSSettingHeading PSSettingEngineHeading">Engine</h3>
+        <p class="PSSettingLead PSSettingEngineLead">Choose FFmpeg and where Video Merger stores temporary preview files.</p>
+
+        <label class="PSSettingLabel" for="PSSettingFFmpeg">FFmpeg path</label>
+        <div class="PSSettingPath">
+          <input id="PSSettingFFmpeg" type="text" placeholder="Use Windows PATH" />
+          <button id="PSSettingFFmpegButton" class="PSSettingBrowse" type="button">Browse</button>
+        </div>
+
+        <label class="PSSettingLabel" for="PSSettingTemporary">Temporary files folder</label>
+        <div class="PSSettingPath">
+          <input id="PSSettingTemporary" type="text" placeholder="Use Windows temp folder" />
+          <button id="PSSettingTemporaryButton" class="PSSettingBrowse" type="button">Browse</button>
+        </div>
+
+        <div class="PSSettingClean">
+          <button id="PSSettingCleanButton" type="button">Clean up</button>
+          <span id="PSSettingCleanStatus" aria-live="polite"></span>
+        </div>
+
+        <h3 class="PSSettingHeading PSSettingSection PSSettingPartHeading">Part detection</h3>
+        <p class="PSSettingLead PSSettingPartLead">Choose how numbered parts of one group are recognized from filenames.</p>
 
         <label class="PSSettingLabel" for="PSSettingStyle">Number style</label>
         <select id="PSSettingStyle" class="PSSettingSelect">
@@ -213,7 +233,7 @@
         </select>
 
         <label class="PSSettingCheck">
-          <input id="PSSettingCustom" type="checkbox" />Advanced: custom pattern (regular expression)
+          <input id="PSSettingCustom" type="checkbox" />Custom (Regular expression)
         </label>
         <div class="PSSettingRow">
           <input id="PSSettingPattern" type="text" placeholder="^(.+?)\s*\((\d+)\)$  (group 1 = name, group 2 = number)" />

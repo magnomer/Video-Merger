@@ -8,9 +8,10 @@ function PTimelineShow(group) {
     const label = segment.start === segment.end ? String(segment.start) : `${segment.start}–${segment.end}`;
     const fileLabel = segment.missing ? `Missing (${segment.count} parts)` : LHtmlEscape(segment.name || `${group.LReportName} (${segment.start}).mp4`);
     const duration = segment.missing ? "" : LHtmlEscape(PPreviewDurationRead(group, segment));
+    const cardData = segment.missing ? "" : ` data-preview-index="${segment.index}"`;
 
     return `
-      <div class="PSegment${missingClass}${issueClass}">
+      <div class="PSegment${missingClass}${issueClass}"${cardData}>
         <div><strong>${label}</strong><span>${fileLabel}</span><span>${duration}</span></div>
       </div>
     `;
@@ -22,12 +23,12 @@ function PSegmentRead(group) {
   const segments = [];
   let nextNumber = files[0]?.LReportNumber || 1;
 
-  files.forEach(file => {
+  files.forEach((file, index) => {
     const number = Number(file.LReportNumber);
     if (number > nextNumber) {
       segments.push({ start: nextNumber, end: number - 1, count: number - nextNumber, missing: true });
     }
-    segments.push({ start: number, end: number, count: 1, missing: false, name: file.LReportName, duration: file.LReportDurationSecond });
+    segments.push({ start: number, end: number, count: 1, missing: false, index, name: file.LReportName, duration: file.LReportDurationSecond });
     nextNumber = number + 1;
   });
 

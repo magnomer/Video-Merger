@@ -21,6 +21,8 @@ function POptionRead() {
     LPreferencePattern: PSSettingPattern.value.trim(),
     LPreferenceCustom: PSSettingCustom.checked,
     LPreferenceUnnumbered: PSSettingUnnumbered.checked,
+    LPreferenceFFmpeg: PSSettingFFmpeg.value.trim(),
+    LPreferenceTemporary: PSSettingTemporary.value.trim(),
   };
 }
 
@@ -44,6 +46,8 @@ function POptionWrite(preference) {
   PSSettingPattern.value = preference.LPreferencePattern || "";
   PSSettingCustom.checked = Boolean(preference.LPreferenceCustom);
   PSSettingUnnumbered.checked = Boolean(preference.LPreferenceUnnumbered);
+  PSSettingFFmpeg.value = preference.LPreferenceFFmpeg || "";
+  PSSettingTemporary.value = preference.LPreferenceTemporary || "";
   POutputStateSet();
 
   if (typeof PSSettingStateSet === "function") {
@@ -60,6 +64,8 @@ function POptionAutoStart() {
     POptionField,
     POptionCaution,
     POptionWarning,
+    PSSettingFFmpeg,
+    PSSettingTemporary,
   ];
 
   elementsToSave.forEach(element => {

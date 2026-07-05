@@ -36,6 +36,10 @@ function PResultShow(report) {
 }
 
 function PResultRenderSet() {
+  if (typeof PPreviewStop === "function") {
+    PPreviewStop();
+  }
+
   const groups = PResultStateReport?.LReportGroup || [];
   const selectedGroup = groups[PResultStateIndex] || groups[0] || null;
   const groupList = groups.length > 0

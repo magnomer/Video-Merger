@@ -7,6 +7,7 @@ function PPreviewShow(group) {
       </div>
       <div class="PPreviewStage PPreviewStageEmpty">
         <video id="PPreviewVideo" class="PPreviewVideo" preload="metadata" playsinline></video>
+        <div id="PPreviewNotice" class="PPreviewNotice" hidden></div>
         <div class="PPreviewControl">
           <button id="PPreviewPlay" class="PPreviewPlay" type="button" disabled aria-label="${PLanguageTextRead("playPreview")}">${PPreviewIconShow("Play")}</button>
           <button id="PPreviewNext" class="PPreviewSkip" type="button" disabled aria-label="${PLanguageTextRead("nextClip")}">${PPreviewIconShow("Next")}</button>
@@ -32,6 +33,7 @@ function PPreviewShow(group) {
     </div>
     <div class="PPreviewStage">
       <video id="PPreviewVideo" class="PPreviewVideo" preload="metadata" playsinline></video>
+      <div id="PPreviewNotice" class="PPreviewNotice" hidden></div>
       <div class="PPreviewControl">
         <button id="PPreviewPlay" class="PPreviewPlay" type="button" aria-label="${PLanguageTextRead("playPreview")}">${PPreviewIconShow("Play")}</button>
         <button id="PPreviewNext" class="PPreviewSkip" type="button" aria-label="${PLanguageTextRead("nextClip")}">${PPreviewIconShow("Next")}</button>
