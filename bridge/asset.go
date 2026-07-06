@@ -2,7 +2,7 @@ package bridge
 
 import "video-merger/backend"
 
-func (a *LProgram) LAssetPreviewStop() string {
-	backend.LAssetPreviewStop()
+func (a *LProgram) LAssetPreviewStop(session string) string {
+	backend.LAssetPreviewStop(session)
 	return "Preview loading stopped."
 }

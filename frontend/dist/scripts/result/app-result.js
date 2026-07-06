@@ -1,8 +1,10 @@
 let PResultStateReport = null;
 let PResultStateIndex = 0;
 let PResultOutputTimer = null;
+let PResultPreviewTimer = null;
 let PResultMergeUpdate = false;
 let PResultAnalysisKey = "";
+const PResultPreviewDelay = 40;
 
 function PResultErrorShow(title, error) {
   PMeterText.textContent = title;
@@ -87,6 +89,8 @@ function PResultTaskRunningCheck(kind, finalMessage) {
 }
 
 function PResultRenderSet() {
+  PResultPreviewCancel();
+
   if (typeof PPreviewStop === "function") {
     PPreviewStop();
   }
@@ -117,6 +121,10 @@ function PResultRenderSet() {
   PInspectorCopyStart();
   PResultGroupStart();
 
+  if (typeof PPreviewVideoMount === "function") {
+    PPreviewVideoMount();
+  }
+
   if (typeof PWorkSet === "function") {
     PWorkSet();
   }
@@ -125,9 +133,17 @@ function PResultRenderSet() {
 }
 
 function PResultGroupStart() {
-  document.querySelectorAll(".PGroupRow").forEach(row => {
-    row.addEventListener("click", () => {
-      PResultSelectionSet(Number(row.dataset.index || 0));
+  document.querySelectorAll(".PGroupCard").forEach(card => {
+    card.addEventListener("pointerdown", event => {
+      if (event.button !== 0) {
+        return;
+      }
+
+      PResultSelectionSet(Number(card.dataset.index || 0));
+    });
+
+    card.addEventListener("click", () => {
+      PResultSelectionSet(Number(card.dataset.index || 0));
     });
   });
 }
@@ -143,6 +159,8 @@ function PResultSelectionSet(index) {
     return;
   }
 
+  // Kill any in-flight preview work for the previous group at once so nothing
+  // from the old selection keeps running once the user moves on.
   if (typeof PPreviewStop === "function") {
     PPreviewStop();
   }
@@ -150,33 +168,62 @@ function PResultSelectionSet(index) {
   PResultStateIndex = nextIndex;
   const selectedGroup = groups[PResultStateIndex];
 
+  // Reflect the selection immediately, regardless of whether the player is
+  // ready. The card highlight and inspector are cheap and must never wait on
+  // the media pipeline.
   PResultGroupSelectionSet();
-  PResultWorkSet(selectedGroup);
+  PResultInspectorSet(selectedGroup);
+
+  // Defer the heavy preview rebuild (video element + timeline) so rapid group
+  // switching only materialises the latest choice once, instead of thrashing
+  // the media pipeline with a torn-down/recreated <video> per click.
+  PResultPreviewSchedule();
 }
 
 function PResultGroupSelectionSet() {
   document.querySelectorAll(".PGroupCard").forEach(card => {
-    const row = card.querySelector(".PGroupRow");
-    const selected = Number(row?.dataset.index || 0) === PResultStateIndex;
+    const selected = Number(card.dataset.index || 0) === PResultStateIndex;
     card.classList.toggle("PGroupSelected", selected);
-
-    if (row) {
-      row.setAttribute("aria-pressed", selected ? "true" : "false");
-    }
+    card.setAttribute("aria-pressed", selected ? "true" : "false");
   });
 }
 
-function PResultWorkSet(selectedGroup) {
+function PResultInspectorSet(selectedGroup) {
   const inspector = document.querySelector(".PInspector");
-  const preview = document.querySelector(".PPreview");
-
-  if (inspector) {
-    inspector.innerHTML = PInspectorShow(selectedGroup);
-    PInspectorCopyStart();
+  if (!inspector) {
+    return;
   }
 
+  inspector.innerHTML = PInspectorShow(selectedGroup);
+  PInspectorCopyStart();
+}
+
+function PResultPreviewSchedule() {
+  PResultPreviewCancel();
+  PResultPreviewTimer = setTimeout(() => {
+    PResultPreviewTimer = null;
+
+    const groups = PResultStateReport?.LReportGroup || [];
+    const selectedGroup = groups[PResultStateIndex] || groups[0] || null;
+    PResultPreviewSet(selectedGroup);
+  }, PResultPreviewDelay);
+}
+
+function PResultPreviewCancel() {
+  if (PResultPreviewTimer !== null) {
+    clearTimeout(PResultPreviewTimer);
+    PResultPreviewTimer = null;
+  }
+}
+
+function PResultPreviewSet(selectedGroup) {
+  const preview = document.querySelector(".PPreview");
   if (preview) {
     preview.innerHTML = PPreviewShow(selectedGroup);
+  }
+
+  if (typeof PPreviewVideoMount === "function") {
+    PPreviewVideoMount();
   }
 
   if (typeof PWorkSet === "function") {

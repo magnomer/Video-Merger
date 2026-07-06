@@ -82,7 +82,7 @@
 
     <section class="PEntry" aria-label="Merge setup">
       <div class="PPathway">
-        <label for="PSourceText">Source</label>
+        <label class="PPathwayLabel" for="PSourceText">Source</label>
         <div class="PFieldBox PSourceBox">
           <img id="PSourceIcon" class="PFieldImage" src="assets/Folder.svg" alt="" aria-hidden="true" />
           <textarea id="PSourceText" rows="1" placeholder="Select files/folders or type paths manually, one per line"></textarea>
@@ -97,7 +97,7 @@
           </button>
         </div>
 
-        <label for="POutputText">Output</label>
+        <label class="PPathwayLabel" for="POutputText">Output</label>
         <div class="PFieldBox POutputBox">
           <img id="POutputIcon" class="PFieldImage" src="assets/Folder.svg" alt="" aria-hidden="true" />
           <input id="POutputText" type="text" placeholder="Select output folder or type manually" />
@@ -112,15 +112,15 @@
           </button>
         </div>
 
-        <label for="POptionField">Suffix</label>
+        <label class="PPathwayLabel" for="POptionField">Suffix</label>
         <div class="PFieldBox POptionBox">
           <input id="POptionField" type="text" placeholder="optional suffix, e.g. _merged" />
           <button class="PHelpButton" type="button" aria-label="Suffix help" data-tooltip="Append a suffix before the output file extension.">i</button>
         </div>
 
-        <div class="POptionInput">
-          <label class="POptionCheck"><input id="POptionSubfolder" type="checkbox" />Include subfolders</label>
-          <label class="POptionCheck"><input id="POptionMirror" type="checkbox" />Same as input</label>
+        <div class="PPathwayOption">
+          <label class="PPathwayCheck"><input id="POptionSubfolder" type="checkbox" />Include subfolders</label>
+          <label class="PPathwayCheck"><input id="POptionMirror" type="checkbox" />Same as input</label>
         </div>
       </div>
 
@@ -142,13 +142,13 @@
           <strong id="PMeterPercent">0%</strong>
         </div>
 
-        <div class="POptionWarning">
-          <div class="POptionHelp">
-            <label class="POptionCheck"><input id="POptionCaution" type="checkbox" />Ignore cautions</label>
+        <div class="PControlOption">
+          <div class="PControlHelp">
+            <label class="PControlCheck"><input id="POptionCaution" type="checkbox" />Ignore cautions</label>
             <button class="PHelpButton" type="button" aria-label="Ignore cautions help" data-tooltip="Not strictly identical, but probably compatible.">?</button>
           </div>
-          <div class="POptionHelp">
-            <label class="POptionCheck"><input id="POptionWarning" type="checkbox" />Force merge</label>
+          <div class="PControlHelp">
+            <label class="PControlCheck"><input id="POptionWarning" type="checkbox" />Force merge</label>
             <button class="PHelpButton PHelpDanger" type="button" aria-label="Force merge despite warnings help" data-tooltip="Attempt merging even when compatibility checks report problems.">!</button>
           </div>
         </div>

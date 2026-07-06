@@ -32,7 +32,9 @@ func main() {
 			Assets:     LAssetBundle,
 			Middleware: backend.LAssetMiddlewareCreate,
 		},
-		OnStartup: app.LProgramStart,
+		OnStartup:     app.LProgramStart,
+		OnBeforeClose: app.LProgramStop,
+		OnShutdown:    app.LProgramShutdown,
 		Bind: []interface{}{
 			app,
 		},

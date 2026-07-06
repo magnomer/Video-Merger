@@ -27,7 +27,7 @@ func LAssetVideoRead(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	file, info, err := LAssetFileOpen(request.Context(), id, request.URL.Query().Get("preview") == "compatibility")
+	file, info, err := LAssetFileOpen(request.Context(), id, request.URL.Query().Get("preview") == "compatibility", request.URL.Query().Get("session"))
 	if err != nil {
 		http.NotFound(response, request)
 		return

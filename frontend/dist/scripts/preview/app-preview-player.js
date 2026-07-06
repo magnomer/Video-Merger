@@ -1,36 +1,144 @@
 let PPreviewSessionStopSet = null;
 let PPreviewSessionValue = 0;
+let PPreviewRequestValue = 0;
+let PPreviewRequestGroup = null;
+let PPreviewVideoElement = null;
+let PPreviewActive = null;
+
+// The WebView2 media pipeline keeps a <video> loading/decoding until it is
+// explicitly unloaded or garbage collected. Rebuilding the preview markup on
+// every group switch would orphan a still-loading element each time, so the
+// browser ends up juggling several concurrent media loads (CPU spikes, frozen
+// UI). To avoid that we keep a single element alive and re-mount it.
+function PPreviewVideoRead() {
+  if (!PPreviewVideoElement) {
+    const video = document.createElement("video");
+    video.id = "PPreviewVideo";
+    video.className = "PPreviewVideo";
+    video.setAttribute("preload", "metadata");
+    video.setAttribute("playsinline", "");
+    PPreviewVideoElement = video;
+    PPreviewVideoBind(video);
+  }
+
+  return PPreviewVideoElement;
+}
+
+function PPreviewVideoBind(video) {
+  video.addEventListener("play", () => {
+    if (PPreviewActive) PPreviewPlaySet(PPreviewActive.state, PPreviewActive.view);
+  });
+  video.addEventListener("pause", () => {
+    if (PPreviewActive) PPreviewPauseSet(PPreviewActive.state, PPreviewActive.view);
+  });
+  video.addEventListener("timeupdate", () => {
+    const active = PPreviewActive;
+    if (!active || !PPreviewSessionCheck(active.state)) {
+      return;
+    }
+
+    PPreviewTimeSet(active.state, active.offsets, active.view.video, active.view.slider, active.view.now);
+  });
+  video.addEventListener("ended", () => {
+    if (PPreviewActive) PPreviewEndSet(PPreviewActive.state, PPreviewActive.view, PPreviewActive.load, PPreviewActive.offsets);
+  });
+  video.addEventListener("error", () => {
+    if (PPreviewActive) PPreviewErrorSet(PPreviewActive.state, PPreviewActive.offsets, PPreviewActive.view, PPreviewActive.load);
+  });
+}
+
+function PPreviewVideoReset() {
+  const video = PPreviewVideoElement;
+  if (!video) {
+    return;
+  }
+
+  try {
+    video.pause();
+  } catch (_) {}
+
+  video.onloadedmetadata = null;
+  video.removeAttribute("src");
+  video.removeAttribute("data-preview-asset");
+  video.removeAttribute("data-preview-compatibility");
+
+  try {
+    video.load();
+  } catch (_) {}
+}
+
+function PPreviewVideoMount() {
+  const stage = document.querySelector(".PPreviewStage");
+  if (!stage) {
+    return;
+  }
+
+  const template = stage.querySelector("#PPreviewVideo");
+  const video = PPreviewVideoRead();
+  if (template === video) {
+    return;
+  }
+
+  // Abort whatever the shared element was doing before it is reused for the
+  // newly selected group.
+  PPreviewVideoReset();
+
+  if (template) {
+    template.replaceWith(video);
+  } else {
+    stage.insertBefore(video, stage.firstChild);
+  }
+}
 
 function PPreviewStop() {
+  const stoppedSession = String(PPreviewSessionValue);
+  PPreviewLocalStopSet();
+  PPreviewBackendStopSet(stoppedSession);
+}
+
+function PPreviewQuitStop() {
+  PPreviewLocalStopSet();
+  PPreviewBackendStopSet("");
+}
+
+function PPreviewLocalStopSet() {
   PPreviewSessionValue += 1;
 
   if (typeof PPreviewSessionStopSet === "function") {
     PPreviewSessionStopSet();
     PPreviewSessionStopSet = null;
   }
-
-  PPreviewBackendStopSet();
 }
 
-function PPreviewBackendStopSet() {
+function PPreviewBackendStopSet(session) {
   try {
     const stop = window.go?.bridge?.LProgram?.LAssetPreviewStop;
     if (typeof stop === "function") {
-      stop().catch?.(() => {});
+      Promise.resolve(stop(String(session ?? ""))).catch(() => null);
     }
   } catch (_) {}
 }
 
-function PPreviewScheduleStart(group) {
-  const session = PPreviewSessionValue;
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      if (session !== PPreviewSessionValue) {
-        return;
-      }
+function PPreviewFrameWait() {
+  return new Promise(resolve => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  });
+}
 
-      PPreviewStart(group, session);
-    });
+function PPreviewScheduleStart(group) {
+  PPreviewRequestValue += 1;
+  PPreviewRequestGroup = group || null;
+  const request = PPreviewRequestValue;
+  const session = PPreviewSessionValue;
+
+  PPreviewFrameWait().then(() => {
+    if (request !== PPreviewRequestValue || session !== PPreviewSessionValue) {
+      return;
+    }
+
+    if (PPreviewRequestGroup) {
+      PPreviewStart(PPreviewRequestGroup, session);
+    }
   });
 }
 
@@ -40,7 +148,7 @@ function PPreviewStart(group, session) {
     return;
   }
 
-  const state = { files: view.files, index: 0, seeking: false, playing: false, resume: false, pendingSecond: null, readyKey: 0, active: true, session };
+  const state = { files: view.files, index: 0, seeking: false, playing: false, resume: false, pendingSecond: null, readyKey: 0, active: true, loaded: false, session };
   const offsets = PPreviewOffsetRead(view.files);
   const totalSeconds = offsets[offsets.length - 1] || 0;
 
@@ -50,9 +158,16 @@ function PPreviewStart(group, session) {
 
   const load = (index, shouldPlay, targetSecond = 0, compatibility = false) => PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view, compatibility);
 
+  // The shared <video> keeps its listeners across groups, so route its events
+  // to whichever session is current instead of re-binding them every time.
+  PPreviewActive = { state, offsets, view, load };
   PPreviewSessionStopSet = () => PPreviewSessionStop(state, view);
   PPreviewEventStart(state, offsets, view, load);
-  load(0, false);
+
+  // Do NOT touch the media pipeline on selection. Selecting a group must never
+  // make the webview load a video (no thumbnail, no metadata fetch). The clip
+  // is only loaded once the user actually asks to play/seek it (state.loaded).
+  view.tag.textContent = `1 / ${state.files.length} ${PLanguageTextRead("playback")}`;
 }
 
 function PPreviewSessionStop(state, view) {
@@ -60,7 +175,12 @@ function PPreviewSessionStop(state, view) {
   state.seeking = false;
   state.playing = false;
   state.resume = false;
+  state.loaded = false;
   state.readyKey += 1;
+
+  if (view?.notice) {
+    view.notice.hidden = true;
+  }
 
   if (!view?.video) {
     return;
@@ -82,7 +202,7 @@ function PPreviewSessionStop(state, view) {
 
 function PPreviewViewRead(group) {
   return {
-    video: document.getElementById("PPreviewVideo"),
+    video: PPreviewVideoRead(),
     play: document.getElementById("PPreviewPlay"),
     next: document.getElementById("PPreviewNext"),
     slider: document.getElementById("PPreviewSlider"),
@@ -106,6 +226,7 @@ function PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view, com
     return;
   }
 
+  state.loaded = true;
   state.index = Math.max(0, Math.min(index, state.files.length - 1));
   state.resume = shouldPlay;
   PPreviewTargetSet(state, view.slider, view.now, (offsets[state.index] || 0) + Math.max(0, targetSecond || 0));
@@ -118,7 +239,14 @@ function PPreviewLoad(index, shouldPlay, targetSecond, state, offsets, view, com
   };
   view.tag.textContent = `${state.index + 1} / ${state.files.length} ${PLanguageTextRead("playback")}`;
 
-  const source = PPreviewUrlRead(state.files[state.index].LReportAsset, compatibility);
+  // Tell the user the webview is fetching the clip. The compatibility retry
+  // keeps its own notice, and PPreviewPlaySet clears this once playback begins.
+  if (view.notice && shouldPlay && !compatibility) {
+    view.notice.hidden = false;
+    view.notice.textContent = PLanguageTextRead("previewLoading");
+  }
+
+  const source = PPreviewUrlRead(state.files[state.index].LReportAsset, compatibility, state.session);
   if (view.video.src.endsWith(source)) {
     const second = Math.max(0, targetSecond);
     PPreviewFrameShow(view);

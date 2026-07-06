@@ -1,5 +1,8 @@
-function PPreviewUrlRead(asset, compatibility) {
-  const query = new URLSearchParams({ asset: String(asset || "") });
+function PPreviewUrlRead(asset, compatibility, session) {
+  const query = new URLSearchParams({
+    asset: String(asset || ""),
+    session: String(session ?? ""),
+  });
   if (compatibility) query.set("preview", "compatibility");
   return `/LAssetVideoRead.mp4?${query.toString()}`;
 }

@@ -1,4 +1,3 @@
-.PGroupRow,
 .PGroupMeta {
   display: flex;
   align-items: center;
@@ -7,84 +6,106 @@
 .PGroupList { flex: 0 1 auto; min-height: 0; overflow: auto; padding: 0 24px 14px; }
 
 .PGroupCard {
-  position: relative;
   width: 100%;
-  min-height: 58px;
-  padding: 0;
-  overflow: hidden;
-  border-color: var(--line-strong);
-  background: #fbfdff;
-}
-
-.PGroupCard + .PGroupCard { margin-top: 10px; }
-.PGroupCard::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: var(--primary);
-}
-
-.PGroupCard.PGroupSelected {
-  border-color: #cbdaf8;
-  box-shadow: 0 0 0 1px rgba(11, 115, 232, 0.07), 0 10px 24px rgba(15, 23, 42, 0.05);
-}
-
-.PGroupRow {
-  width: 100%;
-  min-height: 58px;
+  min-height: 48px;
+  height: auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  gap: 20px;
-  padding: 8px 24px 8px 30px;
-  border: 0;
-  background: transparent;
+  gap: 16px;
+  padding: 6px 20px 6px 26px;
+  overflow: hidden;
+  border-color: var(--line-strong);
+  background: #fbfdff;
   text-align: left;
-  box-shadow: none;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  appearance: none;
+  --PGroupAccent: #9ca3af;
+  --PGroupAccentSoft: #f3f4f6;
+  --PGroupIconColor: #4b5563;
 }
 
-.PGroupRow:hover:not(:disabled) { background: #f8fbff; box-shadow: none; }
+.PGroupCard + .PGroupCard { margin-top: 8px; }
+.PGroupCard:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f8fbff;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+.PGroupCard:active:not(:disabled) {
+  background: #f3f7ff;
+  transform: none;
+}
+.PGroupCard.PGroupSelected {
+  border-color: color-mix(in srgb, var(--PGroupAccent) 35%, #ffffff);
+  background: linear-gradient(to right, var(--PGroupAccent) 0 10px, #fbfdff 10px);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--PGroupAccent) 12%, transparent), 0 8px 18px rgba(15, 23, 42, 0.045);
+}
+.PGroupCard.PGroupSelected:hover:not(:disabled) {
+  background: linear-gradient(to right, var(--PGroupAccent) 0 10px, #f8fbff 10px);
+}
+.PGroupCard.PGroupSelected:active:not(:disabled) {
+  background: linear-gradient(to right, var(--PGroupAccent) 0 10px, #f3f7ff 10px);
+}
+
+.PGroupCard.PGroupPending {
+  --PGroupAccent: #9ca3af;
+  --PGroupAccentSoft: #f3f4f6;
+  --PGroupIconColor: #4b5563;
+}
+.PGroupCard.PGroupProcessing {
+  --PGroupAccent: #16a34a;
+  --PGroupAccentSoft: #eaf8ef;
+  --PGroupIconColor: #15803d;
+}
+.PGroupCard.PGroupProcessed {
+  --PGroupAccent: var(--primary);
+  --PGroupAccentSoft: var(--primary-soft);
+  --PGroupIconColor: var(--primary);
+}
+.PGroupCard.PGroupFailed {
+  --PGroupAccent: var(--error);
+  --PGroupAccentSoft: var(--error-soft);
+  --PGroupIconColor: var(--error);
+}
+
 .PGroupMain {
   display: grid;
-  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-columns: 32px minmax(0, 1fr);
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   min-width: 0;
 }
-.PGroupIcon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 6px; background: #f3f6fa; color: #526071; }
-.PGroupIcon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.PGroupIcon img { width: 24px; height: 24px; display: block; object-fit: contain; }
-.PGroupName { min-width: 0; font-size: 15px; font-weight: 800; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.PGroupIcon { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 6px; background: var(--PGroupAccentSoft); color: var(--PGroupIconColor); }
+.PGroupIcon svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.PGroupIcon img { width: 21px; height: 21px; display: block; object-fit: contain; }
+.PGroupName { min-width: 0; font-size: 14px; font-weight: 600; color: #111827; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .PGroupMeta {
   justify-self: center;
   justify-content: center;
-  gap: 22px;
+  gap: 18px;
   color: #293241;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   min-width: 0;
 }
-.PGroupMeta span { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
-.PGroupMeta svg { width: 17px; height: 17px; fill: none; stroke: #5f6b7a; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.PGroupMeta span { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+.PGroupMeta svg { width: 15px; height: 15px; fill: none; stroke: #5f6b7a; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .PGroupAside {
   justify-self: end;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex: 0 0 auto;
 }
-.PGroupAside .PGroupChevron { margin-left: 20px; }
+.PGroupAside .PGroupChevron { margin-left: 14px; }
 .PBadge {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  min-height: 28px;
-  padding: 4px 11px;
+  min-height: 24px;
+  padding: 3px 9px;
   border-radius: 999px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
 }

@@ -29,3 +29,14 @@ func LProgramCreate(LManifestWailsData []byte) *LProgram {
 func (a *LProgram) LProgramStart(LRuntimeContext context.Context) {
 	a.LRuntimeContext = LRuntimeContext
 }
+
+func (a *LProgram) LProgramStop(LRuntimeContext context.Context) bool {
+	backend.LAssetPreviewStop("")
+	a.LTaskStop()
+	return false
+}
+
+func (a *LProgram) LProgramShutdown(LRuntimeContext context.Context) {
+	backend.LAssetPreviewStop("")
+	a.LTaskStop()
+}

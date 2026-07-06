@@ -3,7 +3,7 @@
   .PWorkHandle[data-work-axis="width"] { display: none; }
   .PInspector { grid-column: 1; border-bottom: 1px solid var(--line); }
   .PPreview { grid-column: 1; }
-  .PGroupRow {
+  .PGroupCard {
     grid-template-columns: 1fr;
     align-items: flex-start;
   }

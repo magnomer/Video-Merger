@@ -49,7 +49,7 @@ func LAssetIDRead(path string) string {
 	return id
 }
 
-func LAssetFileOpen(ctx context.Context, id string, compatibility bool) (*os.File, os.FileInfo, error) {
+func LAssetFileOpen(ctx context.Context, id string, compatibility bool, session string) (*os.File, os.FileInfo, error) {
 	path, info, ok := LAssetPathRead(id)
 	if !ok {
 		return nil, nil, os.ErrNotExist
@@ -57,7 +57,7 @@ func LAssetFileOpen(ctx context.Context, id string, compatibility bool) (*os.Fil
 
 	servedPath := path
 	if compatibility {
-		previewPath, err := LAssetPreviewResolve(ctx, path, info)
+		previewPath, err := LAssetPreviewResolve(ctx, session, path, info)
 		if err == nil {
 			servedPath = previewPath
 		}

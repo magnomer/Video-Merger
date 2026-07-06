@@ -14,6 +14,9 @@ function LWindowStateStart() {
   });
 
   window.addEventListener("beforeunload", () => {
+    if (typeof PPreviewQuitStop === "function") {
+      PPreviewQuitStop();
+    }
     LWindowStateSave();
   });
 }
@@ -21,7 +24,12 @@ function LWindowStateStart() {
 function LWindowControlStart() {
   document.getElementById("PFrameDash")?.addEventListener("click", () => window.runtime?.WindowMinimise?.());
   document.getElementById("PFrameBox")?.addEventListener("click", () => window.runtime?.WindowToggleMaximise?.());
-  document.getElementById("PFrameExit")?.addEventListener("click", () => window.runtime?.Quit?.());
+  document.getElementById("PFrameExit")?.addEventListener("click", () => {
+    if (typeof PPreviewQuitStop === "function") {
+      PPreviewQuitStop();
+    }
+    window.runtime?.Quit?.();
+  });
 }
 
 async function LWindowStateLoad() {

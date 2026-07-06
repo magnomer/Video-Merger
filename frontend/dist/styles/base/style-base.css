@@ -42,8 +42,6 @@ body {
 .PVisualButton,
 .PControlButton,
 .PStatus,
-.POptionCheck,
-.POptionHelp,
 .PMeterBlock,
 .PFrameSystem {
   display: flex;

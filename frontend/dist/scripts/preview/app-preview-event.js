@@ -4,31 +4,36 @@ function PPreviewEventStart(state, offsets, view, load) {
       return;
     }
 
-    view.video.paused ? view.video.play().catch(() => {}) : view.video.pause();
+    // First press loads the clip; nothing is fetched until the user asks.
+    if (!state.loaded) {
+      view.play.innerHTML = PPreviewIconShow("Pause");
+      load(state.index, true, 0);
+      return;
+    }
+
+    if (view.video.paused) {
+      view.play.innerHTML = PPreviewIconShow("Pause");
+      view.video.play().catch(() => {});
+    } else {
+      view.video.pause();
+    }
   });
   view.next.addEventListener("click", () => {
     if (!PPreviewSessionCheck(state)) {
       return;
     }
 
-    load((state.index + 1) % state.files.length, !view.video.paused);
+    const shouldPlay = state.loaded ? !view.video.paused : true;
+    load((state.index + 1) % state.files.length, shouldPlay);
   });
   view.slider.addEventListener("pointerdown", event => PPreviewSliderStart(event, state, view.video));
   view.slider.addEventListener("input", () => PPreviewSeekSet(Number(view.slider.value), state, offsets, view.video, load));
   view.slider.addEventListener("pointerup", event => PPreviewSliderStop(event, state, view.video));
   view.slider.addEventListener("pointercancel", event => PPreviewSliderStop(event, state, view.video));
   PPreviewSegmentEventStart(view.timeline, state, view.video, load);
-  view.video.addEventListener("play", () => PPreviewPlaySet(state, view));
-  view.video.addEventListener("pause", () => PPreviewPauseSet(state, view));
-  view.video.addEventListener("timeupdate", () => {
-    if (!PPreviewSessionCheck(state)) {
-      return;
-    }
-
-    PPreviewTimeSet(state, offsets, view.video, view.slider, view.now);
-  });
-  view.video.addEventListener("ended", () => PPreviewEndSet(state, view, load, offsets));
-  view.video.addEventListener("error", () => PPreviewErrorSet(state, offsets, view, load));
+  // Media-element events (play/pause/timeupdate/ended/error) are bound once on
+  // the shared <video> in PPreviewVideoBind; only the freshly rebuilt controls
+  // are wired here to avoid stacking duplicate listeners on every group switch.
   view.volume?.addEventListener("input", () => {
     if (!PPreviewSessionCheck(state)) {
       return;
@@ -58,7 +63,7 @@ function PPreviewSegmentEventStart(timeline, state, video, load) {
         return;
       }
 
-      const shouldPlay = !video.paused && !video.ended;
+      const shouldPlay = state.loaded ? (!video.paused && !video.ended) : true;
       load(index, shouldPlay, 0);
     });
   });

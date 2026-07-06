@@ -14,15 +14,18 @@ import (
 )
 
 var (
-	LAssetPreviewLock        sync.Mutex
+	LAssetPreviewLock        = make(chan struct{}, 1)
 	lAssetPreviewTaskLock    sync.Mutex
 	lAssetPreviewTaskCounter uint64
 	lAssetPreviewTaskList    []LAssetPreviewTask
+	lAssetPreviewStopMap     = map[string]struct{}{}
 )
 
 type LAssetPreviewTask struct {
-	LAssetPreviewKey    uint64
-	LAssetPreviewCancel context.CancelFunc
+	LAssetPreviewKey     uint64
+	LAssetPreviewSession string
+	LAssetPreviewCancel  context.CancelFunc
+	LAssetPreviewDone    chan struct{}
 }
 
 type LAssetPreviewMarker struct {
@@ -31,7 +34,7 @@ type LAssetPreviewMarker struct {
 	LAssetSourceTime int64  `json:"LAssetSourceTime"`
 }
 
-func LAssetPreviewResolve(ctx context.Context, sourcePath string, sourceInfo os.FileInfo) (string, error) {
+func LAssetPreviewResolve(ctx context.Context, session string, sourcePath string, sourceInfo os.FileInfo) (string, error) {
 	preference, _ := LPreferenceLoad()
 	cachePath, err := LAssetPreviewPathRead(preference, sourcePath, sourceInfo)
 	if err != nil {
@@ -43,11 +46,14 @@ func LAssetPreviewResolve(ctx context.Context, sourcePath string, sourceInfo os.
 	}
 
 	previewContext, cancel := context.WithCancel(ctx)
-	previewStop := LAssetPreviewStart(cancel)
+	previewStop := LAssetPreviewStart(session, cancel)
 	defer previewStop()
 
-	LAssetPreviewLock.Lock()
-	defer LAssetPreviewLock.Unlock()
+	previewUnlock, err := LAssetPreviewLockSet(previewContext)
+	if err != nil {
+		return "", err
+	}
+	defer previewUnlock()
 
 	if err := previewContext.Err(); err != nil {
 		return "", err
@@ -127,36 +133,60 @@ func LAssetPreviewResolve(ctx context.Context, sourcePath string, sourceInfo os.
 	return cachePath, nil
 }
 
-func LAssetPreviewStart(cancel context.CancelFunc) func() {
+func LAssetPreviewStart(session string, cancel context.CancelFunc) func() {
+	done := make(chan struct{})
+
 	lAssetPreviewTaskLock.Lock()
 	lAssetPreviewTaskCounter++
 	key := lAssetPreviewTaskCounter
 	lAssetPreviewTaskList = append(lAssetPreviewTaskList, LAssetPreviewTask{
-		LAssetPreviewKey:    key,
-		LAssetPreviewCancel: cancel,
+		LAssetPreviewKey:     key,
+		LAssetPreviewSession: session,
+		LAssetPreviewCancel:  cancel,
+		LAssetPreviewDone:    done,
 	})
+	_, stopped := lAssetPreviewStopMap[session]
 	lAssetPreviewTaskLock.Unlock()
+
+	if stopped {
+		cancel()
+	}
 
 	return func() {
 		lAssetPreviewTaskLock.Lock()
-		defer lAssetPreviewTaskLock.Unlock()
-
 		for index, item := range lAssetPreviewTaskList {
 			if item.LAssetPreviewKey == key {
 				lAssetPreviewTaskList = append(lAssetPreviewTaskList[:index], lAssetPreviewTaskList[index+1:]...)
-				return
+				break
 			}
 		}
+		lAssetPreviewTaskLock.Unlock()
+
+		close(done)
 	}
 }
 
-func LAssetPreviewStop() {
+func LAssetPreviewStop(session string) {
 	lAssetPreviewTaskLock.Lock()
+	if session != "" {
+		lAssetPreviewStopMap[session] = struct{}{}
+	}
 	items := append([]LAssetPreviewTask(nil), lAssetPreviewTaskList...)
 	lAssetPreviewTaskLock.Unlock()
 
 	for _, item := range items {
-		item.LAssetPreviewCancel()
+		if session == "" || item.LAssetPreviewSession == session {
+			item.LAssetPreviewCancel()
+		}
+	}
+}
+
+func LAssetPreviewLockSet(ctx context.Context) (func(), error) {
+	select {
+	case LAssetPreviewLock <- struct{}{}:
+		return func() { <-LAssetPreviewLock }, nil
+	case <-ctx.Done():
+		return nil, ctx.Err()
 	}
 }
 
