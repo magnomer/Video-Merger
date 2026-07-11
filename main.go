@@ -15,11 +15,11 @@ import (
 //go:embed all:frontend/dist
 var LAssetBundle embed.FS
 
-//go:embed wails.json
-var LManifestWailsData []byte
+//go:embed version.json
+var LVersionData []byte
 
 func main() {
-	app := bridge.LProgramCreate(LManifestWailsData)
+	app := bridge.LProgramCreate(LVersionData)
 
 	err := wails.Run(&options.App{
 		Title:     "Video Merger",

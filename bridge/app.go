@@ -9,7 +9,7 @@ import (
 type LProgram struct {
 	LRuntimeContext context.Context
 
-	LManifestWailsData []byte
+	LVersionData []byte
 
 	LTaskLock   sync.Mutex
 	LTaskCancel context.CancelFunc
@@ -20,9 +20,9 @@ type LProgram struct {
 	LInspectionReady      bool
 }
 
-func LProgramCreate(LManifestWailsData []byte) *LProgram {
+func LProgramCreate(LVersionData []byte) *LProgram {
 	return &LProgram{
-		LManifestWailsData: LManifestWailsData,
+		LVersionData: LVersionData,
 	}
 }
 

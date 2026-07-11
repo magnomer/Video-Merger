@@ -11,15 +11,13 @@ type LProgramProfile struct {
 	LProgramAuthorEmail string `json:"LProgramAuthorEmail"`
 }
 
-type LManifestWails struct {
-	LProgramName   string `json:"name"`
-	LProgramAuthor struct {
+type LVersionManifest struct {
+	LProgramVersion string `json:"version"`
+	LProgramName    string `json:"name"`
+	LProgramAuthor  struct {
 		LProgramName  string `json:"name"`
 		LProgramEmail string `json:"email"`
 	} `json:"author"`
-	LProgramInfo struct {
-		LProgramVersion string `json:"productVersion"`
-	} `json:"info"`
 }
 
 func (a *LProgram) LProgramProfileRead() LProgramProfile {
@@ -29,13 +27,17 @@ func (a *LProgram) LProgramProfileRead() LProgramProfile {
 		LProgramAuthorName: "Unknown",
 	}
 
-	var config LManifestWails
-	if err := json.Unmarshal(a.LManifestWailsData, &config); err != nil {
+	var config LVersionManifest
+	if err := json.Unmarshal(a.LVersionData, &config); err != nil {
 		return info
 	}
 
-	if config.LProgramInfo.LProgramVersion != "" {
-		info.LProgramVersion = config.LProgramInfo.LProgramVersion
+	if config.LProgramVersion != "" {
+		info.LProgramVersion = config.LProgramVersion
+	}
+
+	if config.LProgramName != "" {
+		info.LProgramName = config.LProgramName
 	}
 
 	if config.LProgramAuthor.LProgramName != "" {
